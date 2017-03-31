@@ -1,5 +1,5 @@
 # water-collection-service
-A service for submitting and retrieving water collection samples#Water Collection Service
+A service for submitting and retrieving water collection samples
 
 ##Background
 Qualified service personnel will take a water collection from a source and submit the collection to a lab for analysis and measurement. The laboratory will analyze the water collection and perform measurements with the latest measurement type available. The measurements will be added to the water collection when the measurements are complete. Chemists can retrieve the water collection and measurement data for reporting. The chemist will eventually be able to specify an area and all water collections taken within that area will be returned.
