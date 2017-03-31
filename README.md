@@ -1,7 +1,7 @@
 # water-collection-service
 A service for submitting and retrieving water collection samples
 
-##Background
+## Background
 Qualified service personnel will take a water collection from a source and submit the collection to a lab for analysis and measurement. The laboratory will analyze the water collection and perform measurements with the latest measurement type available. The measurements will be added to the water collection when the measurements are complete. Chemists can retrieve the water collection and measurement data for reporting. The chemist will eventually be able to specify an area and all water collections taken within that area will be returned.
 The collection will be taken manually at first, followed by an appliance carried by the service personnel. A source in this case is one of the following:
 * A well (unfiltered)
@@ -10,7 +10,7 @@ The collection will be taken manually at first, followed by an appliance carried
 * A pond
 * A puddle
 
-##Epic
+## Epic
 Description: As a chemist, I want to retrieve water collections and measurements from a laboratory so I can run reports by various attributes (i.e. station id, measurement version, etc.) to see the compounds in the water.
 
 Acceptance Criteria:
@@ -45,7 +45,7 @@ Acceptance Criteria:
     * https://<server-name>/water-collections?station_id=<station id>&measurement_version=<measurement version> which return a page of water collections for the given station id and measurement version, 100 per page
     * https://<server-name>/water-collections?collection_id=<collection id> which returns the water collection resource
 
-##Notes:
+## Notes:
 * A story breakdown is needed for the following:
     * Resource schema creation (including regular expressions)
     * Service creation (framework, routing, etc)
@@ -59,7 +59,7 @@ Acceptance Criteria:
 * Initially, the collection will be done by manually qualified service personnel. Eventually, the collection with be done by the technician using an appliance.
 * Should the resource use collections or samples to avoid confusion with a list of resources AKA a collection? Answer: collections
 
-##Behavioral Considerations:
+## Behavioral Considerations:
 * The service will support HTTP requests with headers and a body.
 * The service can be accessed via HTTPS or TDB.
 * The service will periodically (TBD) run collections thru the latest measurement method. The following behaviors apply:
@@ -70,27 +70,27 @@ Acceptance Criteria:
         * Measurement type
         * All compound percentages
 
-##Performance Considerations:
+## Performance Considerations:
 * A collection POST will return in under 100ms
 * A collection GET will return in under 100ms
 
-##Security Considerations:
+## Security Considerations:
 * The service will be secured with W3 Basic Authentication
 * The service will be secured with TLS mutual authentication in subsequent versions
 * The service will validate station id and drop the request if not valid
 * The service will drop requests from the same station id within 5 seconds if not valid
 * The service will drop requests with an invalid collection id.
 
-##Availability Considerations:
+## Availability Considerations:
 * The service will be available 99.999% of the time. This translates to ~30 seconds per year.
 
-##Maintainability Considerations:
+## Maintainability Considerations:
 * The resource will be versioned by a header attribute, TDB.
 * The service will allow any version supported.
 * The service will maintain a canonical representation of the resource.
 * The resource will be represented internally by a Java DTO
 
-##Serviceability Considerations:
+## Serviceability Considerations:
 * The service will log all requests
 * The service will log request metrics
 
