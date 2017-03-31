@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "title": "Water Collection",
+  "description": "A water collection",
+  "type": "object",
+  "properties": {
+      "id": {
+          "description": "Collection id (uuid; no dashes; Set by service) {read only}",
+          "readOnly": true,
+          "type": "string",
+          "minLength": 32,
+          "maxLength": 32
+      },
+      "station_id": {
+          "description": "Station id (uuid; no dashes; Could be personnel id or IoT id; Set by Reporter)",
+          "type": "string",
+          "minLength": 32,
+          "maxLength": 32
+      },
+      "date_time": {
+          "description": "Collection time (ISO 8601; Set by Reporter)",
+          "type": "string",
+          "format": "date-time"
+      },
+      "longitude": {
+          "description": "Longitude (in degrees; Set by Reporter)",
+          "type": "number"
+      }
+  },
+  "required": [
+    "station_id",
+    "date_time",
+    "longistude"
+  ]
+}
