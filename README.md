@@ -11,9 +11,9 @@ The collection will be taken manually at first, followed by an appliance carried
 * A puddle
 
 ## Epic
-Description: As a chemist, I want to retrieve water collections and measurements from a laboratory so I can run reports by various attributes (i.e. station id, measurement version, etc.) to see the compounds in the water.
+**Description**: As a chemist, I want to retrieve water collections and measurements from a laboratory so I can run reports by various attributes (i.e. station id, measurement version, etc.) to see the compounds in the water.
 
-Acceptance Criteria:
+**Acceptance Criteria**:
 1. A water collection resource represents the following:
     * Collection id (uuid; no dashes; Set by service) {read only}
     * Station id (uuid; no dashes; Could be personnel id or IoT id; Set by Reporter)
