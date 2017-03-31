@@ -8,14 +8,12 @@
           "description": "Collection id (uuid; no dashes; Set by service) {read only}",
           "readOnly": true,
           "type": "string",
-          "minLength": 32,
-          "maxLength": 32
+          "pattern": "^[0-9a-fA-F]{32}$"
       },
       "station_id": {
           "description": "Station id (uuid; no dashes; Could be personnel id or IoT id; Set by Reporter)",
           "type": "string",
-          "minLength": 32,
-          "maxLength": 32
+          "pattern": "^[0-9a-fA-F]{32}$"
       },
       "date_time": {
           "description": "Collection time (ISO 8601; Set by Reporter)",

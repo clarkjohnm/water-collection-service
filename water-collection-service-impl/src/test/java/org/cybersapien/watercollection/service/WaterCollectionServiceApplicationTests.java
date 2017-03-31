@@ -1,4 +1,4 @@
-package org.cybersapien.service.watercollection;
+package org.cybersapien.watercollection.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
