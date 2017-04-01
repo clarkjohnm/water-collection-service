@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "title": "Water compound percentages",
+  "description": "Percentage of various compounds in water",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Object id (uuid; no dashes; Set by service) {read only}",
+      "readOnly": true,
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{32}$"
+    },
+    "voc": {
+      "description": "VOC Percentage {read only}",
+      "readOnly": true,
+      "type": "number"
+    },
+    "pesticides": {
+      "description": "Pesticide Percentage {read only}",
+      "readOnly": true,
+      "type": "number"
+    },
+    "metals": {
+      "description": "Metal Percentage {read only}",
+      "readOnly": true,
+      "type": "number"
+    },
+    "bacteria": {
+      "description": "Bacteria Percentage {read only}",
+      "readOnly": true,
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "voc",
+    "pesticides",
+    "metals",
+    "bacteria"
+  ]
+}
