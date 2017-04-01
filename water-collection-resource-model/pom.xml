@@ -20,6 +20,7 @@
                 <version>0.4.33</version>
                 <configuration>
                     <useCommonsLang3>true</useCommonsLang3>
+                    <includeJsr303Annotations>true</includeJsr303Annotations>
                     <outputDirectory>${project.build.directory}/generated-sources/json</outputDirectory>
                     <sourceDirectory>${basedir}/src/main/resources/schema/v1/service</sourceDirectory>
                     <targetPackage>org.cybersapien.service.water.collection.datatypes</targetPackage>
@@ -43,6 +44,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
         </dependency>
     </dependencies>
 
