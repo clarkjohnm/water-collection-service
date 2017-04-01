@@ -17,9 +17,9 @@ The collection will be taken manually at first, followed by an appliance carried
 1. A water collection resource represents the following:
     * Collection id (uuid; no dashes; Set by service) {read only}
     * Station id (uuid; no dashes; Could be personnel id or IoT id; Set by Reporter)
-    * Collection time (in ms; Set by Reporter)
+    * Collection time (ISO 8601; UTC; Set by Reporter)
     * Collection version (10 digit string; leading zeros okay; Set by Reporter)
-    * Collection type (10 digit string; Leading zeros okay; Set by Reporter)
+    * Collection type (String; Set by Reporter)
     * Collection content (water or gas TDB) {String; Set by Reporter)
     * Longitude (in degrees; Set by Reporter)
     * Latitude (in degrees; Set by Reporter)
@@ -27,7 +27,7 @@ The collection will be taken manually at first, followed by an appliance carried
     * Processing state (fixed set of strings; NOT_STARTED (initial state), IN_PROGRESS, DONE; Set by Server) {read only}
     * Measurement version (10 digit string; leading zeros okay; Set by Server) {read only}
     * Measurement type (description. e.g. Volumetric Gas; Set by Server) {read only}
-    * Compound percentages (object array) {read only}
+    * Compound percentages (complex object) {read only}
         * VOC Percentage (percentage) {read only}
         * Pesticide Percentage (percentage) {read only}
         * Metal Percentage (percentage) {read only}
