@@ -51,23 +51,27 @@
     },
     "processing_state": {
       "description": "Processing state (fixed set of strings; NOT_STARTED (initial state), IN_PROGRESS, DONE; Set by Server) {read only}",
+      "readOnly": true,
       "type": "string",
       "minLength": 1,
       "maxLength": 32
     },
     "measurement_version": {
       "description": "Measurement version (10 digit string; leading zeros okay; Set by Server) {read only}",
+      "readOnly": true,
       "type": "string",
       "pattern": "^[0-9]{10}$"
     },
     "measurement_type": {
       "description": "Measurement type (description. e.g. Volumetric Gas; Set by Server) {read only}",
+      "readOnly": true,
       "type": "string",
       "minLength": 1,
       "maxLength": 256
     },
     "compound_percentages": {
       "description": "Compound percentages (object array) {read only}",
+      "readOnly": true,
       "$ref": "compound_percentages.json"
     }
   },
