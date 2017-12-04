@@ -94,5 +94,8 @@ The collection will be taken manually at first, followed by an appliance carried
 * The service will log all requests
 * The service will log request metrics
 
+## Online API documentation
+**http://localhost:8080/water-collection-service/swagger-ui.html**
+
 
 

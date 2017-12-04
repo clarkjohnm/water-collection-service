@@ -6,8 +6,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.2.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>1.5.9.RELEASE</version>
+		<relativePath/>
 	</parent>
 
 	<groupId>org.cybersapien</groupId>
@@ -22,6 +22,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<ignite.version>2.3.0</ignite.version>
+        <springfox.version>2.6.1</springfox.version>
+        <springboot.version>1.5.9.RELEASE</springboot.version>
+        <camel.version>2.20.1</camel.version>
 	</properties>
 
 	<modules>
@@ -31,11 +35,54 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-spring-boot-starter</artifactId>
-				<version>2.18.3</version>
-			</dependency>
+            <!-- Spring boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Apache Camel -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-parent</artifactId>
+                <version>${camel.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Apache Ignite -->
+            <dependency>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-core</artifactId>
+                <version>${ignite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-spring</artifactId>
+                <version>${ignite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-indexing</artifactId>
+                <version>${ignite.version}</version>
+            </dependency>
+
+            <!-- Spring fox -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+
+            <!-- 3p Libraries -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
@@ -50,16 +97,6 @@
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
 				<version>1.1.0.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger2</artifactId>
-				<version>2.6.1</version>
-			</dependency>
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger-ui</artifactId>
-				<version>2.6.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
