@@ -6,7 +6,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.cybersapien.service.water.collection.datatypes.WaterCollection;
 import org.cybersapien.watercollection.component.GetWaterCollectionWorkflow;
-import org.cybersapien.watercollection.util.ExchangeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,13 +35,17 @@ public class WaterCollectionController {
      * @return All water collections
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<WaterCollection> getWaterCollections() {
+    public List<WaterCollection> getWaterCollections() throws Exception {
         List<WaterCollection> result = null;
 
         Exchange exchange = producerTemplate.send(GetWaterCollectionWorkflow.WORKFLOW_URI, (Processor) null);
         if (null != exchange) {
-            //noinspection unchecked
-            result = exchange.getProperty(ExchangeConstants.RESPONSE_PROPERTY, List.class);
+            if (!exchange.isFailed()) {
+                //noinspection unchecked
+                result = exchange.getOut().getBody(List.class);
+            } else {
+                throw exchange.getException();
+            }
         }
 
         return result;
