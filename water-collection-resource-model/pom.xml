@@ -17,7 +17,7 @@
             <plugin>
                 <groupId>org.jsonschema2pojo</groupId>
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-                <version>0.4.33</version>
+                <version>0.5.1</version>
                 <configuration>
                     <useCommonsLang3>true</useCommonsLang3>
                     <includeJsr303Annotations>true</includeJsr303Annotations>

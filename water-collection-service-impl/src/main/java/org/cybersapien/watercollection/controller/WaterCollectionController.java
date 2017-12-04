@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Controller class for WaterCollection resource
+ * Controller class for WaterCollection resource. Validation can be added by using the @Valid annotation on
+ * method parameters.
  */
 @Slf4j
 @RestController
