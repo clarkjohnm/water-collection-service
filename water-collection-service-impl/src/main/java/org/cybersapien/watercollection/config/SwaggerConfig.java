@@ -40,7 +40,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Water Collection Service")
-                .description("A service to collection water samples")
+                .description("A service to collect water samples")
                 .contact(new Contact("John Clark", null, null))
                 .license("MIT License")
                 .licenseUrl("https://github.com/clarkjohnm/water-collection-service/blob/master/LICENSE.txt")
