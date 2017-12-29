@@ -28,10 +28,9 @@ public class RetrieveWaterCollectionWorkflow extends RouteBuilder implements Pro
 
     @Override
     public void configure() throws Exception {
-        final String igniteCacheURI = new StringBuffer(ApacheCamelConfiguration.IGNITE_CACHE_URI_SCHEME).append(":")
-                .append(ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME).append("?")
-                .append("operation=").append(IgniteCacheOperation.GET)
-                .toString();
+        final String igniteCacheURI = ApacheCamelConfiguration.IGNITE_CACHE_URI_SCHEME + ":"
+                + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME + "?"
+                + "operation=" + IgniteCacheOperation.GET;
 
         from(WORKFLOW_URI)
                 .routeId(RetrieveWaterCollectionWorkflow.class.getSimpleName())
@@ -48,7 +47,6 @@ public class RetrieveWaterCollectionWorkflow extends RouteBuilder implements Pro
 
         if (null == message) {
             exchange.setException(new NullPointerException("out message is null"));
-            return;
         }
     }
 }

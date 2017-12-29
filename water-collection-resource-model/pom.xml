@@ -22,7 +22,7 @@
                     <useCommonsLang3>true</useCommonsLang3>
                     <includeJsr303Annotations>true</includeJsr303Annotations>
                     <outputDirectory>${project.build.directory}/generated-sources/json</outputDirectory>
-                    <sourceDirectory>${basedir}/src/main/resources/schema/v1/service</sourceDirectory>
+                    <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
                     <targetPackage>org.cybersapien.service.water.collection.datatypes</targetPackage>
                 </configuration>
                 <executions>

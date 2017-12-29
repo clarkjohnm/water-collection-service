@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "title": "Error",
+  "description": "REST Error source",
+  "type": "object",
+  "properties": {
+    "pointer": {
+      "description": "Path representing the point of the error. Generally a URI path element {read only}",
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "pointer"
+  ]
+}

@@ -27,15 +27,13 @@ public class CreateWaterCollectionWorkflow extends RouteBuilder implements Proce
 
     @Override
     public void configure() throws Exception {
-        final String igniteCacheURI = new StringBuffer(ApacheCamelConfiguration.IGNITE_CACHE_URI_SCHEME).append(":")
-                .append(ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME).append("?")
-                .append("operation=").append(IgniteCacheOperation.PUT)
-                .toString();
+        final String igniteCacheURI = ApacheCamelConfiguration.IGNITE_CACHE_URI_SCHEME + ":"
+                + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME + "?"
+                + "operation=" + IgniteCacheOperation.PUT;
 
-        final String igniteIdGenURI = new StringBuffer(ApacheCamelConfiguration.IGNITE_IDGEN_URI_SCHEME).append(":")
-                .append(ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME).append("?")
-                .append("operation=").append(IgniteIdGenOperation.GET_AND_INCREMENT)
-                .toString();
+        final String igniteIdGenURI = ApacheCamelConfiguration.IGNITE_IDGEN_URI_SCHEME + ":"
+                + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME + "?"
+                + "operation=" + IgniteIdGenOperation.GET_AND_INCREMENT;
 
         from(WORKFLOW_URI)
                 .routeId(CreateWaterCollectionWorkflow.class.getSimpleName())
@@ -51,7 +49,6 @@ public class CreateWaterCollectionWorkflow extends RouteBuilder implements Proce
 
         if (null == message) {
             exchange.setException(new NullPointerException("out message is null"));
-            return;
         }
     }
 }
