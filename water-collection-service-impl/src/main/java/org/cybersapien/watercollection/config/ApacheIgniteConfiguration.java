@@ -40,7 +40,7 @@ public class ApacheIgniteConfiguration {
     /**
      * Indicator for whether or not to use persistent storage
      */
-    private final boolean enableFilePersistence = false;
+    private final boolean enableFilePersistence = true;
 
     /**
      * Ignite configuration
