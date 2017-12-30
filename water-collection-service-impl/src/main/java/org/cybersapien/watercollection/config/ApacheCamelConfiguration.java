@@ -1,6 +1,9 @@
 package org.cybersapien.watercollection.config;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.camel.component.ignite.cache.IgniteCacheEndpoint;
 import org.apache.camel.component.ignite.idgen.IgniteIdGenComponent;
@@ -32,6 +35,11 @@ public class ApacheCamelConfiguration {
      * Apache Ignite instance
      */
     private final Ignite ignite;
+
+    /**
+     * Apache Camel context
+     */
+    private final CamelContext camelContext;
 
     /**
      * Ignite cache endpoint
@@ -69,5 +77,16 @@ public class ApacheCamelConfiguration {
                 ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME, null, IgniteIdGenComponent.fromIgnite(ignite));
 
         return igniteIdGenEndpoint;
+    }
+
+    /**
+     * Apache Camel FluentProducerTemplate
+     *
+     * @return the FluentProducerTemplate
+     */
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public FluentProducerTemplate fluentProducerTemplate() {
+        return new DefaultFluentProducerTemplate(camelContext);
     }
 }

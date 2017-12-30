@@ -2,10 +2,8 @@ package org.cybersapien.watercollection.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
-import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.cybersapien.service.water.collection.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.component.CreateWaterCollectionWorkflow;
 import org.cybersapien.watercollection.component.RetrieveWaterCollectionWorkflow;
@@ -31,9 +29,9 @@ import javax.ws.rs.WebApplicationException;
 public class WaterCollectionController {
 
     /**
-     * The Camel context
+     * The camel producer template
      */
-    private final CamelContext camelContext;
+    private final FluentProducerTemplate fluentProducerTemplate;
 
     /**
      * Get a water collection
@@ -47,10 +45,7 @@ public class WaterCollectionController {
     public WaterCollection getWaterCollection(@PathVariable Long id) throws Exception {
         WaterCollection result = null;
 
-        FluentProducerTemplate fluentProducerTemplate = new DefaultFluentProducerTemplate(camelContext);
-        fluentProducerTemplate.setDefaultEndpointUri(RetrieveWaterCollectionWorkflow.WORKFLOW_URI);
-
-        Exchange exchange = fluentProducerTemplate.withBody(id).send();
+        Exchange exchange = fluentProducerTemplate.withBody(id).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).send();
         if (null != exchange) {
             if (!exchange.isFailed()) {
                 //noinspection unchecked
@@ -79,10 +74,7 @@ public class WaterCollectionController {
     public WaterCollection postWaterCollection(@Valid WaterCollection waterCollection) throws Exception {
         WaterCollection result = null;
 
-        FluentProducerTemplate fluentProducerTemplate = new DefaultFluentProducerTemplate(camelContext);
-        fluentProducerTemplate.setDefaultEndpointUri(CreateWaterCollectionWorkflow.WORKFLOW_URI);
-
-        Exchange exchange = fluentProducerTemplate.send();
+        Exchange exchange = fluentProducerTemplate.to(CreateWaterCollectionWorkflow.WORKFLOW_URI).send();
         if (null != exchange) {
             if (!exchange.isFailed()) {
                 //noinspection unchecked
