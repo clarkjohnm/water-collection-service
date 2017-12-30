@@ -1,12 +1,8 @@
 package org.cybersapien.watercollection.component;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.IgniteConstants;
@@ -23,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class CreateWaterCollectionWorkflow extends RouteBuilder implements Processor {
+public class CreateWaterCollectionWorkflow extends RouteBuilder {
 
     /**
      * The ignite cache endpoint
@@ -52,16 +48,6 @@ public class CreateWaterCollectionWorkflow extends RouteBuilder implements Proce
                 .to(igniteIdGenEndpoint)
                 .setHeader(IgniteConstants.IGNITE_CACHE_OPERATION, constant(IgniteCacheOperation.PUT))
                 .setHeader(IgniteConstants.IGNITE_CACHE_KEY, ExpressionBuilder.bodyExpression(String.class))
-                .to(igniteCacheEndpoint)
-                .process(this);
-    }
-
-    @Override
-    public void process(@NonNull Exchange exchange) throws Exception {
-        Message message = exchange.getOut();
-
-        if (null == message) {
-            exchange.setException(new NullPointerException("out message is null"));
-        }
+                .to(igniteCacheEndpoint);
     }
 }
