@@ -9,6 +9,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
 import org.apache.camel.component.ignite.idgen.IgniteIdGenOperation;
+import org.apache.camel.model.RouteDefinition;
 import org.cybersapien.watercollection.config.ApacheCamelConfiguration;
 import org.cybersapien.watercollection.config.ApacheIgniteConfiguration;
 import org.springframework.stereotype.Component;
@@ -35,9 +36,11 @@ public class CreateWaterCollectionWorkflow extends RouteBuilder implements Proce
                 + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME + "?"
                 + "operation=" + IgniteIdGenOperation.GET_AND_INCREMENT;
 
-        from(WORKFLOW_URI)
-                .routeId(CreateWaterCollectionWorkflow.class.getSimpleName())
-                .setExchangePattern(ExchangePattern.InOut)
+        RouteDefinition worflowDefinition = from(WORKFLOW_URI);
+        worflowDefinition.routeId(CreateWaterCollectionWorkflow.class.getSimpleName());
+        worflowDefinition.setExchangePattern(ExchangePattern.InOut);
+
+        worflowDefinition
                 .log("Message received on " + WORKFLOW_URI)
                 .to(igniteIdGenURI)
                 .process(this);

@@ -10,6 +10,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
+import org.apache.camel.model.RouteDefinition;
 import org.cybersapien.watercollection.config.ApacheCamelConfiguration;
 import org.cybersapien.watercollection.config.ApacheIgniteConfiguration;
 import org.springframework.stereotype.Component;
@@ -32,10 +33,12 @@ public class RetrieveWaterCollectionWorkflow extends RouteBuilder implements Pro
                 + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME + "?"
                 + "operation=" + IgniteCacheOperation.GET;
 
-        from(WORKFLOW_URI)
-                .routeId(RetrieveWaterCollectionWorkflow.class.getSimpleName())
+        RouteDefinition worflowDefinition = from(WORKFLOW_URI);
+        worflowDefinition.routeId(RetrieveWaterCollectionWorkflow.class.getSimpleName());
+        worflowDefinition.setExchangePattern(ExchangePattern.InOut);
+
+        worflowDefinition
                 .log("Message received on " + WORKFLOW_URI)
-                .setExchangePattern(ExchangePattern.InOut)
                 .setHeader(IgniteConstants.IGNITE_CACHE_KEY, ExpressionBuilder.bodyExpression(String.class))
                 .to(igniteCacheURI)
                 .process(this);

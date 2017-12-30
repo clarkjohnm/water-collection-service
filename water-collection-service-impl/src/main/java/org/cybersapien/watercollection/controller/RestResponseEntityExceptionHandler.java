@@ -1,6 +1,6 @@
 package org.cybersapien.watercollection.controller;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.cybersapien.service.water.collection.datatypes.error.Errors;
 import org.cybersapien.service.water.collection.datatypes.error.Error;
 import org.cybersapien.service.water.collection.datatypes.error.Source;
@@ -21,8 +21,8 @@ import java.util.List;
 /**
  * Class to handle the exceptions for a REST service
  */
+@Slf4j
 @ControllerAdvice
-@Log4j
 public class RestResponseEntityExceptionHandler {
 
     /**

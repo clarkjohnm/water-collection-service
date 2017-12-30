@@ -1,5 +1,6 @@
 package org.cybersapien.watercollection.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -8,7 +9,6 @@ import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.cybersapien.service.water.collection.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.component.CreateWaterCollectionWorkflow;
 import org.cybersapien.watercollection.component.RetrieveWaterCollectionWorkflow;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +25,7 @@ import javax.ws.rs.WebApplicationException;
  * method parameters.
  */
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/v1/water-collections")
 public class WaterCollectionController {
@@ -32,8 +33,7 @@ public class WaterCollectionController {
     /**
      * The Camel context
      */
-    @Autowired
-    private CamelContext camelContext;
+    private final CamelContext camelContext;
 
     /**
      * Get a water collection
