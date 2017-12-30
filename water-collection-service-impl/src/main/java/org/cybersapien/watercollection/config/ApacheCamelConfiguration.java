@@ -1,13 +1,15 @@
 package org.cybersapien.watercollection.config;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
+import org.apache.camel.component.ignite.cache.IgniteCacheEndpoint;
 import org.apache.camel.component.ignite.idgen.IgniteIdGenComponent;
+import org.apache.camel.component.ignite.idgen.IgniteIdGenEndpoint;
 import org.apache.ignite.Ignite;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
+import org.springframework.context.annotation.Scope;
 
 /**
  * Configuration for Apache Camel
@@ -19,12 +21,12 @@ public class ApacheCamelConfiguration {
     /**
      * Scheme for accessing ignite id generation in a URI
      */
-    public static final String IGNITE_IDGEN_URI_SCHEME = "ignite-idgen";
+    private static final String IGNITE_IDGEN_URI_SCHEME = "ignite-idgen";
 
     /**
      * Scheme for accessing ignite cache in a URI
      */
-    public static final String IGNITE_CACHE_URI_SCHEME = "ignite-cache";
+    private static final String IGNITE_CACHE_URI_SCHEME = "ignite-cache";
 
     /**
      * Apache Ignite instance
@@ -32,23 +34,40 @@ public class ApacheCamelConfiguration {
     private final Ignite ignite;
 
     /**
-     * Apache Camel instance
+     * Ignite cache endpoint
+     *
+     * @return the ignite cache endpoint
      */
-    private final CamelContext camelContext;
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public IgniteCacheEndpoint igniteCacheEndpoint() {
+        IgniteCacheEndpoint igniteCacheEndpoint;
 
-    /**
-     * Register Ignite id generator component
-     */
-    @PostConstruct
-    protected void registerIgniteIdGenComponent() {
-        camelContext.addComponent(IGNITE_IDGEN_URI_SCHEME, IgniteIdGenComponent.fromIgnite(ignite));
+        final String igniteCacheURI = ApacheCamelConfiguration.IGNITE_CACHE_URI_SCHEME + ":"
+                + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME + "?";
+
+        igniteCacheEndpoint = new IgniteCacheEndpoint(igniteCacheURI,
+                ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME, null, IgniteCacheComponent.fromIgnite(ignite));
+
+        return igniteCacheEndpoint;
     }
 
     /**
-     * Register Ignite cache component
+     * Ignite idgen endpoint
+     *
+     * @return the ignite idgen endpoint
      */
-    @PostConstruct
-    protected void registerIgniteCacheComponent() {
-        camelContext.addComponent(IGNITE_CACHE_URI_SCHEME, IgniteCacheComponent.fromIgnite(ignite));
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public IgniteIdGenEndpoint igniteIdGenEndpoint() throws Exception {
+        IgniteIdGenEndpoint igniteIdGenEndpoint;
+
+        final String igniteIdGenURI = ApacheCamelConfiguration.IGNITE_IDGEN_URI_SCHEME + ":"
+                + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME + "?";
+
+        igniteIdGenEndpoint = new IgniteIdGenEndpoint(igniteIdGenURI,
+                ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME, null, IgniteIdGenComponent.fromIgnite(ignite));
+
+        return igniteIdGenEndpoint;
     }
 }
