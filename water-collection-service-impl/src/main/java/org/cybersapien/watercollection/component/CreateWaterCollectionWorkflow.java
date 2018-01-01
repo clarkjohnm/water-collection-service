@@ -46,6 +46,7 @@ public class CreateWaterCollectionWorkflow extends RouteBuilder {
                 .log("Message received on " + WORKFLOW_URI)
                 .setHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, constant(IgniteIdGenOperation.GET_AND_INCREMENT))
                 .to(igniteIdGenEndpoint)
+                .log("ID: ${body}")
                 .setHeader(IgniteConstants.IGNITE_CACHE_OPERATION, constant(IgniteCacheOperation.PUT))
                 .setHeader(IgniteConstants.IGNITE_CACHE_KEY, ExpressionBuilder.bodyExpression(String.class))
                 .to(igniteCacheEndpoint);

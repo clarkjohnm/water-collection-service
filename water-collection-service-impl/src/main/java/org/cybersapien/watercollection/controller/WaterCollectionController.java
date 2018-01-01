@@ -9,6 +9,7 @@ import org.cybersapien.watercollection.component.CreateWaterCollectionWorkflow;
 import org.cybersapien.watercollection.component.RetrieveWaterCollectionWorkflow;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -69,12 +70,12 @@ public class WaterCollectionController {
      * @return the water collection with properties such as id which are set by the service.
      * @throws Exception if an exception occurred.
      */
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public WaterCollection postWaterCollection(@Valid WaterCollection waterCollection) throws Exception {
+    public WaterCollection postWaterCollection(@RequestBody @Valid WaterCollection waterCollection) throws Exception {
         WaterCollection result = null;
 
-        Exchange exchange = fluentProducerTemplate.to(CreateWaterCollectionWorkflow.WORKFLOW_URI).send();
+        Exchange exchange = fluentProducerTemplate.withBody(waterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).send();
         if (null != exchange) {
             if (!exchange.isFailed()) {
                 //noinspection unchecked
