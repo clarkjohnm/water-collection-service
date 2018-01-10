@@ -109,6 +109,13 @@
 				<version>1.1.0.Final</version>
 			</dependency>
 
+            <!-- Jasypt -->
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>1.17</version>
+            </dependency>
+
             <!--Test artifacts-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
