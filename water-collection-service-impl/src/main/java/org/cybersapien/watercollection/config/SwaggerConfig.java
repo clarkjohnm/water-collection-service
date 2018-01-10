@@ -1,10 +1,8 @@
 package org.cybersapien.watercollection.config;
 
-import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
@@ -29,10 +27,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                    .apis(RequestHandlerSelectors.any())
-                    // Exclude the basic error controller created by default by Spring
-                    .paths(Predicates.not(PathSelectors.regex("/error")))
-                    .build();
+                    .apis(RequestHandlerSelectors.basePackage("org.cybersapien.watercollection"))
+                .build();
     }
 
     /**

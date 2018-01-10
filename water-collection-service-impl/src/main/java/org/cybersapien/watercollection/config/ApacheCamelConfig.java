@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Scope;
  */
 @RequiredArgsConstructor
 @Configuration
-public class ApacheCamelConfiguration {
+public class ApacheCamelConfig {
 
     /**
      * Scheme for accessing ignite id generation in a URI
@@ -51,11 +51,11 @@ public class ApacheCamelConfiguration {
     public IgniteCacheEndpoint igniteCacheEndpoint() {
         IgniteCacheEndpoint igniteCacheEndpoint;
 
-        final String igniteCacheURI = ApacheCamelConfiguration.IGNITE_CACHE_URI_SCHEME + ":"
-                + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME + "?";
+        final String igniteCacheURI = ApacheCamelConfig.IGNITE_CACHE_URI_SCHEME + ":"
+                + ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME + "?";
 
         igniteCacheEndpoint = new IgniteCacheEndpoint(igniteCacheURI,
-                ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_CACHE_NAME, null, IgniteCacheComponent.fromIgnite(ignite));
+                ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME, null, IgniteCacheComponent.fromIgnite(ignite));
 
         return igniteCacheEndpoint;
     }
@@ -70,11 +70,11 @@ public class ApacheCamelConfiguration {
     public IgniteIdGenEndpoint igniteIdGenEndpoint() throws Exception {
         IgniteIdGenEndpoint igniteIdGenEndpoint;
 
-        final String igniteIdGenURI = ApacheCamelConfiguration.IGNITE_IDGEN_URI_SCHEME + ":"
-                + ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME + "?";
+        final String igniteIdGenURI = ApacheCamelConfig.IGNITE_IDGEN_URI_SCHEME + ":"
+                + ApacheIgniteConfig.IGNITE_WATER_COLLECTION_SEQUENCE_NAME + "?";
 
         igniteIdGenEndpoint = new IgniteIdGenEndpoint(igniteIdGenURI,
-                ApacheIgniteConfiguration.IGNITE_WATER_COLLECTION_SEQUENCE_NAME, null, IgniteIdGenComponent.fromIgnite(ignite));
+                ApacheIgniteConfig.IGNITE_WATER_COLLECTION_SEQUENCE_NAME, null, IgniteIdGenComponent.fromIgnite(ignite));
 
         return igniteIdGenEndpoint;
     }

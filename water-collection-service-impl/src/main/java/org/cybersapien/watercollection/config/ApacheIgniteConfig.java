@@ -13,7 +13,7 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
-import org.cybersapien.service.water.collection.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ import java.util.Collections;
  * Configuration for Apache Ignite
  */
 @Configuration
-public class ApacheIgniteConfiguration {
+public class ApacheIgniteConfig {
 
     /**
      * Cache name for water collections
