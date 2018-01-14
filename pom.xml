@@ -26,6 +26,7 @@
         <springfox.version>2.6.1</springfox.version>
         <springboot.version>1.5.9.RELEASE</springboot.version>
         <camel.version>2.20.1</camel.version>
+        <testng.version>6.13.1</testng.version>
 	</properties>
 
 	<modules>
@@ -121,6 +122,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${springboot.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
                 <scope>test</scope>
             </dependency>
 		</dependencies>
