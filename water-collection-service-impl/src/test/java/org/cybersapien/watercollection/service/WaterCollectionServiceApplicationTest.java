@@ -5,7 +5,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 @SpringBootTest
-public class WaterCollectionServiceApplicationTests  extends AbstractTestNGSpringContextTests {
+public class WaterCollectionServiceApplicationTest extends AbstractTestNGSpringContextTests {
 
 	@Test
 	public void contextLoads() {

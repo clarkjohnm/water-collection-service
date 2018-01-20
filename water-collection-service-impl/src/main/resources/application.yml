@@ -30,6 +30,11 @@ management:
   security:
     enabled: true
 
+# Camel properties
+camel:
+  springboot:
+    name: WaterCollectionCamelContext
+
 # Logging config
 logging:
 #  level:
