@@ -1,6 +1,7 @@
-package org.cybersapien.watercollection.service;
+package org.cybersapien.watercollection;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -8,7 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
  * Main application for water collection service
  */
 @SpringBootApplication
-@ComponentScan("org.cybersapien.watercollection")
+@EnableAutoConfiguration
+@ComponentScan
 public class WaterCollectionServiceApplication {
 
     /**
