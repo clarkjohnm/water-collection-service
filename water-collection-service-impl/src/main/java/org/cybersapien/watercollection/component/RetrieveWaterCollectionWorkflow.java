@@ -8,6 +8,7 @@ import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
 import org.apache.camel.model.RouteDefinition;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
+import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,7 +32,7 @@ public class RetrieveWaterCollectionWorkflow extends RouteBuilder {
                 .log("Message received on " + WORKFLOW_URI)
 
                 .setHeader(IgniteConstants.IGNITE_CACHE_OPERATION, constant(IgniteCacheOperation.GET))
-                .setHeader(IgniteConstants.IGNITE_CACHE_KEY, ExpressionBuilder.bodyExpression(String.class))
+                .setHeader(IgniteConstants.IGNITE_CACHE_KEY, ExpressionBuilder.bodyExpression(WaterCollection.class))
                 .to(ApacheCamelConfig.WATER_COLLECTION_CACHE_URI);
     }
 }

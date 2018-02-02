@@ -3,6 +3,7 @@
   "title": "Water compound percentages",
   "description": "Percentage of various compounds in water",
   "type": "object",
+  "excludedFromEqualsAndHashCode" : [ "additionalProperties" ],
   "properties": {
     "id": {
       "description": "Object id (uuid; no dashes; Set by service) {read only}",

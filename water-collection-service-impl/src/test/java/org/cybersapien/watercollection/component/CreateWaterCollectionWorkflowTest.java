@@ -24,7 +24,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @DisableJmx()
-public class RetrieveWaterCollectionWorkflowTest extends CamelTestSupport {
+public class CreateWaterCollectionWorkflowTest extends CamelTestSupport {
     /**
      * Apache ignite instance
      */
@@ -47,17 +47,15 @@ public class RetrieveWaterCollectionWorkflowTest extends CamelTestSupport {
     public RoutesBuilder createRouteBuilder() throws Exception {
         context.addComponent(ApacheCamelConfig.IGNITE_CACHE_URI_SCHEME, IgniteCacheComponent.fromIgnite(ignite));
 
-        return new RetrieveWaterCollectionWorkflow();
+        return new CreateWaterCollectionWorkflow();
     }
 
     @Test
     public void testRoute() throws Exception {
         WaterCollection waterCollection = WaterCollectionCreator.buildMinimal();
-        final String id = waterCollection.getId();
 
-        // Put water collection in cache
+        Exchange exchange = fluentTemplate.withBody(waterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).send();
 
-        Exchange exchange = fluentTemplate.withBody(id).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).send();
         assertNotNull(exchange);
     }
 }

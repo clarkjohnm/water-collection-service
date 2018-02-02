@@ -6,9 +6,9 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
-import org.apache.camel.component.ignite.idgen.IgniteIdGenOperation;
 import org.apache.camel.model.RouteDefinition;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
+import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,12 +31,8 @@ public class CreateWaterCollectionWorkflow extends RouteBuilder {
         worflowDefinition
                 .log("Message received on " + WORKFLOW_URI)
 
-                .setHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, constant(IgniteIdGenOperation.GET_AND_INCREMENT))
-                .to(ApacheCamelConfig.WATER_COLLECTION_IDGEN_URI)
-                .log("ID: ${body}")
-
                 .setHeader(IgniteConstants.IGNITE_CACHE_OPERATION, constant(IgniteCacheOperation.PUT))
-                .setHeader(IgniteConstants.IGNITE_CACHE_KEY, ExpressionBuilder.bodyExpression(String.class))
+                .setHeader(IgniteConstants.IGNITE_CACHE_KEY, ExpressionBuilder.bodyExpression(WaterCollection.class))
                 .to(ApacheCamelConfig.WATER_COLLECTION_CACHE_URI);
 
     }
