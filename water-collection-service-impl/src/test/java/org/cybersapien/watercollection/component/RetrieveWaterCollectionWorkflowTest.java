@@ -1,13 +1,15 @@
 package org.cybersapien.watercollection.component;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
 import org.apache.camel.test.spring.DisableJmx;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
+import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
@@ -51,13 +53,26 @@ public class RetrieveWaterCollectionWorkflowTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
-        WaterCollection waterCollection = WaterCollectionCreator.buildMinimal();
+    public void testRetrieveWorkflow() throws Exception {
+        final WaterCollection waterCollection = WaterCollectionCreator.buildMinimal();
         final String id = waterCollection.getId();
 
         // Put water collection in cache
+        IgniteCache<String, WaterCollection> waterCollectionCache =
+                ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
+        waterCollectionCache.put(id, waterCollection);
 
-        Exchange exchange = fluentTemplate.withBody(id).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).send();
-        assertNotNull(exchange);
+        WaterCollection expectedResult =
+                fluentTemplate.withBody(id).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+
+        assertNotNull(expectedResult);
+    }
+
+    @Test(expected = CamelExecutionException.class)
+    public void testRetrieveWorkflowWithNullId() throws Exception {
+        WaterCollection expectedResult =
+                fluentTemplate.withBody(null).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+
+        assertNotNull(expectedResult);
     }
 }

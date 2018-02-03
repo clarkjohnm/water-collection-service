@@ -2,11 +2,11 @@ package org.cybersapien.watercollection.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.FluentProducerTemplate;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.component.CreateWaterCollectionWorkflow;
 import org.cybersapien.watercollection.component.RetrieveWaterCollectionWorkflow;
+import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,16 +44,12 @@ public class WaterCollectionController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public WaterCollection getWaterCollection(@PathVariable Long id) throws Exception {
-        WaterCollection result = null;
+        WaterCollection result;
 
-        Exchange exchange = fluentProducerTemplate.withBody(id).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).send();
-        if (null != exchange) {
-            if (!exchange.isFailed()) {
-                //noinspection unchecked
-                result = exchange.getOut().getBody(WaterCollection.class);
-            } else {
-                throw new WebApplicationException(exchange.getException());
-            }
+        try {
+            result = fluentProducerTemplate.withBody(id).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+        } catch (CamelExecutionException cex) {
+            throw new WebApplicationException(cex);
         }
 
         if (null != result) {
@@ -73,16 +69,12 @@ public class WaterCollectionController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public WaterCollection postWaterCollection(@RequestBody @Valid WaterCollection waterCollection) throws Exception {
-        WaterCollection result = null;
+        WaterCollection result;
 
-        Exchange exchange = fluentProducerTemplate.withBody(waterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).send();
-        if (null != exchange) {
-            if (!exchange.isFailed()) {
-                //noinspection unchecked
-                result = exchange.getOut().getBody(WaterCollection.class);
-            } else {
-                throw exchange.getException();
-            }
+        try {
+            result = fluentProducerTemplate.withBody(waterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+        } catch (CamelExecutionException cex) {
+            throw new WebApplicationException(cex);
         }
 
         return result;

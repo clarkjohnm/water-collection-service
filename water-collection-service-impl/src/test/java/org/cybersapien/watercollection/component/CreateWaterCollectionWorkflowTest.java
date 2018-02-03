@@ -1,13 +1,15 @@
 package org.cybersapien.watercollection.component;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
 import org.apache.camel.test.spring.DisableJmx;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
+import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
@@ -51,11 +53,25 @@ public class CreateWaterCollectionWorkflowTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
-        WaterCollection waterCollection = WaterCollectionCreator.buildMinimal();
+    public void testCreateWorkflow() throws Exception {
+        final WaterCollection waterCollection = WaterCollectionCreator.buildMinimal();
+        final String id = waterCollection.getId();
 
-        Exchange exchange = fluentTemplate.withBody(waterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).send();
+        IgniteCache<String, WaterCollection> waterCollectionCache =
+                ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
 
-        assertNotNull(exchange);
+        fluentTemplate.withBody(waterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).request();
+
+        assertNotNull(waterCollectionCache.get(id));
+    }
+
+    @Test(expected = CamelExecutionException.class)
+    public void testCreateWorkflowWithNull() throws Exception {
+        final String id = WaterCollectionCreator.buildMinimal().getId();
+
+        IgniteCache<String, WaterCollection> waterCollectionCache =
+                ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
+
+        fluentTemplate.withBody(null).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).request();
     }
 }
