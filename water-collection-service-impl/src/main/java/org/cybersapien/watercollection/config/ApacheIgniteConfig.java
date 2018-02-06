@@ -33,11 +33,6 @@ public class ApacheIgniteConfig {
     public static final String IGNITE_WATER_COLLECTION_CACHE_NAME = WaterCollection.class.getSimpleName();
 
     /**
-     * Sequence name for water collections
-     */
-    public static final String IGNITE_WATER_COLLECTION_SEQUENCE_NAME = WaterCollection.class.getSimpleName();
-
-    /**
      * Indicator for whether or not to use persistent storage
      */
     private final boolean enableFilePersistence = true;

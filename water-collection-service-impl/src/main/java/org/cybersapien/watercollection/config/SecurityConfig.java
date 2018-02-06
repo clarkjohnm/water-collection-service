@@ -3,25 +3,25 @@ package org.cybersapien.watercollection.config;
 import com.ulisesbocchio.jasyptspringboot.annotation.EncryptablePropertySource;
 import com.ulisesbocchio.jasyptspringboot.annotation.EncryptablePropertySources;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  * Security configuration
  */
-@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
     /**
      * Security configuration for adding users and securing API access
      */
     @Configuration
     @RequiredArgsConstructor
-    @EncryptablePropertySources({
-        @EncryptablePropertySource("classpath:credentials.yml")
-    })
+    @EncryptablePropertySources({@EncryptablePropertySource("classpath:credentials.yml")})
     public static class ApiSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         /**
          * The Spring Environment
@@ -50,12 +50,17 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            // Secure access to the water-collection-service API
-            http.httpBasic().and().authorizeRequests().antMatchers("/v1/water-collections/**").hasRole("USER");
-
-            // Always allow access to the API documentation
-            http.authorizeRequests().antMatchers("/swagger-ui.html*").permitAll();
-
+            // As the name implies, authorize requests unless permission is granted to all
+            http.authorizeRequests()
+                    // Always allow access to the API documentation
+                    .antMatchers("/swagger-ui.html*").permitAll()
+                    // Authorize access to the water-collection-service API to those having the USER role
+                    .antMatchers("/v1/water-collections/**").hasRole("USER")
+                    // Authorize access to the management API's to those having the ADMIN role
+                    .antMatchers("/actuator/**").hasRole("ADMIN")
+                    .and()
+                    // Authenticate using HTTP Basic Authentication and set the WWW-Authenticate header in the response for a 401
+                    .httpBasic().authenticationEntryPoint(new Http401AuthenticationEntryPoint("Basic"));
         }
     }
 }
