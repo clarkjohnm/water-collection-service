@@ -8,7 +8,7 @@ server:
 jasypt:
   encryptor:
     algorithm: PBEWITHMD5ANDTRIPLEDES
-    password: ${JASYPT_ENCRYPTOR_PASSWORD:}
+    password: ${JASYPT_ENCRYPTOR_PASSWORD:deafbeef}
 
 # Security setting for Spring Actuator
 management:

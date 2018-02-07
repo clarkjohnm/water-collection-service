@@ -1,0 +1,26 @@
+# Server properties
+server:
+  # Define a custom port instead of the default 8080
+  port: 8443
+  # SSL properties
+  ssl:
+    # The path to the keystore containing the certificate
+    key-store: classpath:keystore.p12
+    # The format used for the keystore
+    key-store-type: PKCS12
+    # The password used to generate the certificate
+    key-store-password: ENC(AvLHc+TwKqOzbakOQX8lxWX9icXXSv5C)
+    # The alias mapped to the certificate
+    key-alias: wcs
+
+# Tell Spring Security to require requests over HTTPS
+security:
+  require-ssl: true
+
+# Security setting for Spring Actuator
+management:
+  security:
+    enabled: true
+
+
+
