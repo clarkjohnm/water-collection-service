@@ -35,7 +35,7 @@ public class ApacheIgniteConfig {
     /**
      * Indicator for whether or not to use persistent storage
      */
-    private final boolean enableFilePersistence = true;
+    private final boolean enableFilePersistence = false;
 
     /**
      * Ignite configuration
@@ -72,6 +72,7 @@ public class ApacheIgniteConfig {
         igniteConfiguration.setAsyncCallbackPoolSize(2);
         igniteConfiguration.setPeerClassLoadingEnabled(false);
         igniteConfiguration.setIgniteInstanceName("WaterCollectionGrid");
+
         BinaryConfiguration binaryConfiguration = new BinaryConfiguration();
         binaryConfiguration.setCompactFooter(false);
         igniteConfiguration.setBinaryConfiguration(binaryConfiguration);

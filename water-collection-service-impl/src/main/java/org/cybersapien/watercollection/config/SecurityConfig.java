@@ -59,6 +59,8 @@ public class SecurityConfig {
                     // Authorize access to the management API's to those having the ADMIN role
                     .antMatchers("/actuator/**").hasRole("ADMIN")
                     .and()
+                    // Disable cross site request forgery (csrf) since this is not a UI service invoked from a browser
+                    .csrf().disable()
                     // Authenticate using HTTP Basic Authentication and set the WWW-Authenticate header in the response for a 401
                     .httpBasic().authenticationEntryPoint(new Http401AuthenticationEntryPoint("Basic"));
         }

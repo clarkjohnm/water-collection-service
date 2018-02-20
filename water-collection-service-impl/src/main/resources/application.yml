@@ -20,9 +20,3 @@ management:
 camel:
   springboot:
     name: WaterCollectionCamelContext
-
-# Logging config
-logging:
-#  level:
-#    root: DEBUG
-  file: /var/log/local/wcs/water-collection-service.log

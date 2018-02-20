@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
+import java.util.UUID;
 
 /**
  * Controller class for WaterCollection resource. Validation can be added by using the @Valid annotation on
@@ -43,7 +44,7 @@ public class WaterCollectionController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public WaterCollection getWaterCollection(@PathVariable Long id) throws Exception {
+    public WaterCollection getWaterCollection(@PathVariable String id) throws Exception {
         WaterCollection result;
 
         try {
@@ -71,6 +72,7 @@ public class WaterCollectionController {
     public WaterCollection postWaterCollection(@RequestBody @Valid WaterCollection waterCollection) throws Exception {
         WaterCollection result;
 
+        waterCollection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         try {
             result = fluentProducerTemplate.withBody(waterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
         } catch (CamelExecutionException cex) {
