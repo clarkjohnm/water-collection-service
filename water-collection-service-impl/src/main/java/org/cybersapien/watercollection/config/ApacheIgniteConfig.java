@@ -82,8 +82,8 @@ public class ApacheIgniteConfig {
         igniteConfiguration.setGridLogger(slf4jLogger);
 
         // cluster tcp configuration
-        TcpDiscoverySpi tcpDiscoverySpi=new TcpDiscoverySpi();
-        TcpDiscoveryVmIpFinder tcpDiscoveryVmIpFinder=new TcpDiscoveryVmIpFinder();
+        TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
+        TcpDiscoveryVmIpFinder tcpDiscoveryVmIpFinder = new TcpDiscoveryVmIpFinder();
 
         // need to be changed when it come to real cluster
         tcpDiscoveryVmIpFinder.setAddresses(Collections.singletonList("127.0.0.1:47500..47509"));

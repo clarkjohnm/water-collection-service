@@ -120,6 +120,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${springboot.version}</version>
+                <configuration>
+                    <jvmArguments>
+                        -XX:+UseG1GC -Xmx512m -Xms512m -XX:MaxDirectMemorySize=1G -XX:+DisableExplicitGC -Djava.net.preferIPv4Stack=true
+                    </jvmArguments>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>

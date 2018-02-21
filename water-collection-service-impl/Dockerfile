@@ -11,4 +11,4 @@ RUN mkdir -p $IGNITE_HOME
 COPY ${IGNITE_HOME_SOURCE} $IGNITE_HOME
 ADD ${JAR_FILE} /opt/water-collection-service/lib/wcs.jar
 #
-ENTRYPOINT ["java", "-Xms512m", "-Xmx512m", "-XX:+DisableExplicitGC", "-Djava.security.egd=file:/dev/./urandom","-jar","/opt/water-collection-service/lib/wcs.jar"]
+ENTRYPOINT ["java", "-Xms512m", "-Xmx512m", "-XX:MaxDirectMemorySize=1G", "-XX:+UseG1GC", "-XX:+DisableExplicitGC", "-Djava.net.preferIPv4Stack=true", "-Djava.security.egd=file:/dev/./urandom","-jar","/opt/water-collection-service/lib/wcs.jar"]
