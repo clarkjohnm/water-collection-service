@@ -3,7 +3,6 @@ package org.cybersapien.watercollection.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
@@ -24,12 +23,12 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket api() {
+        //noinspection Guava
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                    .apis(RequestHandlerSelectors.any())
-                    .paths(PathSelectors.any())
-                    .build();
+                    .apis(RequestHandlerSelectors.basePackage("org.cybersapien.watercollection"))
+                .build();
     }
 
     /**
@@ -40,7 +39,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Water Collection Service")
-                .description("A service to collection water samples")
+                .description("A service to collect water samples")
                 .contact(new Contact("John Clark", null, null))
                 .license("MIT License")
                 .licenseUrl("https://github.com/clarkjohnm/water-collection-service/blob/master/LICENSE.txt")

@@ -3,6 +3,7 @@
   "title": "Water Collection",
   "description": "A water collection",
   "type": "object",
+  "excludedFromEqualsAndHashCode" : [ "additionalProperties" ],
   "properties": {
     "id": {
       "description": "Collection id (uuid; no dashes; Set by service) {read only}",
@@ -54,25 +55,29 @@
       "readOnly": true,
       "type": "string",
       "minLength": 1,
-      "maxLength": 32
+      "maxLength": 32,
+      "excludedFromEqualsAndHashCode" : true
     },
     "measurement_version": {
       "description": "Measurement version (10 digit string; leading zeros okay; Set by Server) {read only}",
       "readOnly": true,
       "type": "string",
-      "pattern": "^[0-9]{10}$"
+      "pattern": "^[0-9]{10}$",
+      "excludedFromEqualsAndHashCode" : true
     },
     "measurement_type": {
       "description": "Measurement type (description. e.g. Volumetric Gas; Set by Server) {read only}",
       "readOnly": true,
       "type": "string",
       "minLength": 1,
-      "maxLength": 256
+      "maxLength": 256,
+      "excludedFromEqualsAndHashCode" : true
     },
     "compound_percentages": {
       "description": "Compound percentages (object array) {read only}",
       "readOnly": true,
-      "$ref": "compound_percentages.json"
+      "$ref": "compound_percentages.json",
+      "excludedFromEqualsAndHashCode" : true
     }
   },
   "required": [

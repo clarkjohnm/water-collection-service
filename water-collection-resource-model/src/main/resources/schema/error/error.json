@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "title": "Error",
+  "description": "REST Error",
+  "type": "object",
+  "properties": {
+    "status": {
+      "description": "Error status code {read only}",
+      "readOnly": true,
+      "type": "integer"
+    },
+    "source": {
+      "description": "Source of the error {read only}",
+      "readOnly": true,
+      "$ref": "source.json"
+    },
+    "title": {
+      "description": "Error title {read only}",
+      "readOnly": true,
+      "type": "string"
+    },
+    "detail": {
+      "description": "Error detail {read only}",
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "source",
+    "detail"
+  ]
+}

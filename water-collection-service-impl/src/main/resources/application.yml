@@ -1,0 +1,22 @@
+# Server properties
+server:
+  # Service context
+  contextPath: /water-collection-service
+  port: 8080
+
+# Encryption properties
+jasypt:
+  encryptor:
+    algorithm: PBEWITHMD5ANDTRIPLEDES
+    password: ${JASYPT_ENCRYPTOR_PASSWORD:deafbeef}
+
+# Security setting for Spring Actuator
+management:
+  security:
+    enabled: true
+  context-path: /actuator
+
+# Camel properties
+camel:
+  springboot:
+    name: WaterCollectionCamelContext
