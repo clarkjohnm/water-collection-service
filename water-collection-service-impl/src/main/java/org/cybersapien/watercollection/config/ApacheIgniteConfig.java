@@ -2,6 +2,7 @@ package org.cybersapien.watercollection.config;
 
 import lombok.NonNull;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
@@ -44,7 +45,7 @@ public class ApacheIgniteConfig {
      */
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    IgniteConfiguration igniteConfiguration() {
+    public IgniteConfiguration igniteConfiguration() {
         IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
         igniteConfiguration.setClientMode(false);
 
@@ -105,6 +106,17 @@ public class ApacheIgniteConfig {
     }
 
     /**
+     * Create WaterCollection Cache
+     *
+     * @return WaterCollection cache
+     */
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public IgniteCache<String, WaterCollection> waterCollectionCache() {
+        return ignite(igniteConfiguration()).getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
+    }
+
+    /**
      * Ignite instance
      * @param igniteConfiguration the ignite configuration
      * @return the ignite instance
@@ -113,8 +125,6 @@ public class ApacheIgniteConfig {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Ignite ignite(@NonNull IgniteConfiguration igniteConfiguration) throws IgniteException {
-        final Ignite bean = Ignition.start(igniteConfiguration);
-        bean.active(true);
-        return bean;
+        return Ignition.getOrStart(igniteConfiguration);
     }
 }

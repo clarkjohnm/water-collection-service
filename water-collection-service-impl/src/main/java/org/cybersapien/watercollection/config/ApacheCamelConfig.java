@@ -6,8 +6,10 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.ignite.Ignite;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
 
@@ -50,12 +52,23 @@ public class ApacheCamelConfig {
     }
 
     /**
+     * Camel Ignite Cache Component
+     *
+     * @return Ignite Cache Component
+     */
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public IgniteCacheComponent igniteCacheComponent() {
+        return IgniteCacheComponent.fromIgnite(ignite);
+    }
+
+    /**
      * Initialize the camel context with ignite components
      *
      * @throws Exception if an exception occurs initializing the camel context
      */
     @PostConstruct
     void initializeContext() throws Exception {
-        camelContext.addComponent(IGNITE_CACHE_URI_SCHEME, IgniteCacheComponent.fromIgnite(ignite));
+        camelContext.addComponent(IGNITE_CACHE_URI_SCHEME, igniteCacheComponent());
     }
 }

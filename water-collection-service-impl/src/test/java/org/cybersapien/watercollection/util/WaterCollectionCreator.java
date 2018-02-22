@@ -27,6 +27,6 @@ public class WaterCollectionCreator {
                 .withCollectionContent("WATER")
                 .withCollectionQuantity(new RandomDataGenerator().nextUniform(10.0, 20.0))
                 .withLongitude(new RandomDataGenerator().nextUniform(80.0, 120.0))
-                .withLongitude(new RandomDataGenerator().nextUniform(30.0, 50.0));
+                .withLatitude(new RandomDataGenerator().nextUniform(30.0, 50.0));
     }
 }
