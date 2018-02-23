@@ -9,7 +9,7 @@ server:
     # The format used for the keystore
     key-store-type: PKCS12
     # The password used to generate the certificate
-    key-store-password: ENC(AvLHc+TwKqOzbakOQX8lxWX9icXXSv5C)
+    key-store-password: ENC(nTUmdW81BOGXMAeqn4Qe+JtJnEkvS+3v)
     # The alias mapped to the certificate
     key-alias: wcs
 

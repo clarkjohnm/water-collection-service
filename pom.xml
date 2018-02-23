@@ -25,6 +25,7 @@
         <springfox.version>2.6.1</springfox.version>
         <springboot.version>1.5.9.RELEASE</springboot.version>
         <camel.version>2.20.1</camel.version>
+        <spring.profiles.active>secure</spring.profiles.active>
     </properties>
 
     <modules>
