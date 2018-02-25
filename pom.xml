@@ -11,7 +11,7 @@
 
     <groupId>org.cybersapien</groupId>
     <artifactId>water-collection-service</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
 
     <name>water-collection-service</name>
@@ -25,6 +25,7 @@
         <springfox.version>2.6.1</springfox.version>
         <springboot.version>1.5.9.RELEASE</springboot.version>
         <camel.version>2.20.1</camel.version>
+        <spring.profiles.active>secure</spring.profiles.active>
     </properties>
 
     <modules>
@@ -163,6 +164,11 @@
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>1.0-m5.1</version>
+                <configuration>
+                    <noDeploy>true</noDeploy>
+                    <enableFeatureVersions>true</enableFeatureVersions>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
             </plugin>
         </plugins>
     </build>

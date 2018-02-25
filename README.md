@@ -133,6 +133,7 @@ gcloud beta compute instances create-with-container wcs-compute-1 \
 --no-restart-on-failure \
 --tags=http-server,https-server
 ```
+* Set the `JASYPT_ENCRYPTOR_PASSWORD` environment variable for the VM instance using the plaintext master password
 * Get external IP address for testing: `gcloud compute addresses list`
 * Delete instance: `gcloud compute instances delete wcs-compute-1`
 
@@ -167,6 +168,28 @@ The following command(s) can be used to create the project and VM instance.
 > terraform apply
 ```
 
+## Security
+The basic authentication mechanism relies on a master password to encrypt/decrypt values in the configuration. 
+The clear master password is not stored anywhere in source code control. The master password must be derived at runtime
+and supplied to the service to decrypt the relevant properties. Since GCP is currently the cloud provider of choice, the
+Google KMS service will be used to store and retrieve the master password for use by the water collection service.
+To use the KMS service:
+* Create a global keyring: `gcloud kms keyrings create master-password-keyring --location global`
+* Create a key in the keyring: `gcloud kms keys create master-password --location global --keyring master-password-keyring --purpose encryption`
+* Disable rotation (for now) on the key: `gcloud kms keys update master-password --remove-rotation-schedule --location global --keyring master-password-keyring`
+* List the keys: `gcloud kms keys list --location global --keyring master-password-keyring`
 
+### Encrypt/Decrypt
 
+* Prepare plaintext file: `echo -n "master password to be encrypted" > master-password-plaintext-file`
+* Encrypt: `gcloud kms encrypt --location=global --keyring=master-password-keyring --key=master-password --plaintext-file=master-password-plaintext-file --ciphertext-file=master-password-ciphertext-file.enc`
+* Decrypt (to terminal): `gcloud kms decrypt --location=global --keyring=master-password-keyring --key=master-password --ciphertext-file=master-password-ciphertext-file.enc --plaintext-file=-`
 
+### Update credentials
+If you need to re-generate a master password,
+
+1. Regenerate the encrypted properties in `credentials.yml` and `application-secure.yml`
+2. Update the `JASYPT_ENCRYPTOR_PASSWORD` environment variable of Google VM instances with the plaintext master password
+
+## Running the docker container locally
+`docker run -it --rm --env JASYPT_ENCRYPTOR_PASSWORD=$JASYPT_ENCRYPTOR_PASSWORD gcr.io/wcs-195520/wcs:<version>`
