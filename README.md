@@ -41,29 +41,29 @@ in the water.
         * TDB
 2. The chemist can get the water collections for a given station id
 3. The chemist can add a water collection
-4. The service is accessed using the URI https:/<server name>/water-collections
+4. The service is accessed using the URI `https:/<server name>/water-collections/v1/water-collections`
 5. The service is secured thru W3 basic authentication for now. The service will be subsequently secured by TLS mutual authentication to reduce nefarious use.
 6. Resource is represented as JSON
-7. Resource is versioned thru a header element, not a URI path element
+7. Resource is versioned thru a URI path element
 8. URI query parameters containing restricted data will be encoded using an encryption scheme common to the reporter (e.g. client) and server. (TBD)
 9. URI can take the form of:
-    * https://<server-name>/water-collections?station_id=<station id> which return a page of water collection resources for the given station id and the latest measurement version, 100 per page.
-    * https://<server-name>/water-collections?station_id=<station id>&measurement_version=<measurement version> which return a page of water collections for the given station id and measurement version, 100 per page
-    * https://<server-name>/water-collections?collection_id=<collection id> which returns the water collection resource
+    * `https://<server-name>/water-collections/v1/water-collections?station_id=<station id>` which return a page of water collection resources for the given station id and the latest measurement version, 100 per page.
+    * `https://<server-name>/water-collections/v1/water-collections?station_id=<station id>&measurement_version=<measurement version>` which return a page of water collections for the given station id and measurement version, 100 per page
+    * `https://<server-name>/water-collections/v1/water-collections?collection_id=<collection id>` which returns the water collection resource
 
 ## Notes:
 * A story breakdown is needed for the following:
-    * Resource schema creation (including regular expressions)
-    * Service creation (framework, routing, etc)
-    * HTTP Method (e.g. POST and GET)
+    * ~~Resource schema creation (including regular expressions)~~ **Done**
+    * ~~Service creation (framework, routing, etc)~~ **Done**
+    * ~~HTTP Method (e.g. POST and GET)~~ **Done**
         * Perhaps a story per URI?
-    * Resource version support
+    * ~~Resource version support~~ **Done**
     * Velocity checks
-    * TLS mutual authentication changes (**Not needed. basic auth over https is sufficient**)
+    * ~~TLS mutual authentication changes~~ (**Not needed. basic auth over https is sufficient**)
     * Measurement type or version change
 * No PUT, PATCH or DELETE from the public API. In other words, no update or delete. Collections are facts and will only be created and read but the API.
 * Initially, the collection will be done by manually qualified service personnel. Eventually, the collection with be performed by the technician using an appliance.
-* [Question] Should the resource use collections or samples to avoid confusion with a list of resources AKA a collection? Answer: collections
+* [Question] ~~Should the resource use collections or samples to avoid confusion with a list of resources AKA a collection?~~ **Answer: collections**
 
 ## Behavioral Considerations:
 * The service will support HTTP requests with headers and a body.
@@ -82,7 +82,7 @@ in the water.
 
 ## Security Considerations:
 * The service will be secured with W3 Basic Authentication
-* The service will be secured with TLS mutual authentication in subsequent versions (**not needed**)
+* ~~The service will be secured with TLS mutual authentication in subsequent versions~~ (**not needed**)
 * The service will validate station id and drop the request if not valid
 * The service will drop requests from the same station id within 5 seconds if not valid
 
@@ -92,7 +92,7 @@ in the water.
 ## Maintainability Considerations:
 * The resource will be versioned by a URL path attribute.
 * The service will allow any supported service version (e.g. v1, v2, etc).
-* The service will maintain a canonical representation of the resource.
+* ~~The service will maintain a canonical representation of the resource.~~ **The canonical model is the resource model**
 * The resource will be represented internally by a Java DTO.
 
 ## Serviceability Considerations:
@@ -117,10 +117,10 @@ instances or for creating a cluster using `kubernetes`. Googles' container optim
 be used when creating instances.
 
 * Set current project: `gcloud config set project wcs-195520`
-* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:0.0.1-SNAPSHOT`
+* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:<version>`
 
 ### Releases
-When running a release build, use the `secure` Spring profile (i.e.`-Dspring.profiles=secure`) to expose the service 
+A release build will use the `secure` Spring profile (i.e.`-Dspring.profiles=secure`) to expose the service 
 via `https` on port 8443. Port 8443 will be accessible on the compute instance using firewall rules.
 Use `gcloud compute firewall-rules list` to view the set of firewall rules.
 
@@ -128,12 +128,13 @@ Use `gcloud compute firewall-rules list` to view the set of firewall rules.
 * Create instance:
 ```
 gcloud beta compute instances create-with-container wcs-compute-1 \
---container-image gcr.io/wcs-195520/wcs:0.0.1-SNAPSHOT \
+--container-image gcr.io/wcs-195520/wcs:<version> \
 --machine-type=n1-standard-1 \
 --no-restart-on-failure \
 --tags=http-server,https-server
 ```
-* Set the `JASYPT_ENCRYPTOR_PASSWORD` environment variable for the VM instance using the plaintext master password
+* Set the `JASYPT_ENCRYPTOR_PASSWORD` environment variable for the VM instance using the plaintext master password.
+Use the VM instance UI to do so by editing the container properties,
 * Get external IP address for testing: `gcloud compute addresses list`
 * Delete instance: `gcloud compute instances delete wcs-compute-1`
 
@@ -142,8 +143,8 @@ gcloud beta compute instances create-with-container wcs-compute-1 \
 * Create kubernetes cluster: `gcloud container clusters create wcs-cluster --num-nodes=1`
 * Set current cluster: `gcloud config set container/cluster wcs-cluster`
 * Set Kubernetes credentials: `gcloud container clusters get-credentials wcs-cluster`
-* Deploy service using kubernetes: `kubectl run wcs-server --image gcr.io/wcs-195520/wcs:0.0.1-SNAPSHOT --port 8080`
-* Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 80 --target-port 8080`
+* Deploy service using kubernetes: `kubectl run wcs-server --image gcr.io/wcs-195520/wcs:<version> --port 8443`
+* Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 443 --target-port 8443`
 * Get service details for external IP to connect over the internet: `kubectl get service`
 
 ##### View service logs
@@ -170,9 +171,9 @@ The following command(s) can be used to create the project and VM instance.
 
 ## Security
 The basic authentication mechanism relies on a master password to encrypt/decrypt values in the configuration. 
-The clear master password is not stored anywhere in source code control. The master password must be derived at runtime
+The plaintext master password is not stored anywhere in source code control. The master password must be derived at runtime
 and supplied to the service to decrypt the relevant properties. Since GCP is currently the cloud provider of choice, the
-Google KMS service will be used to store and retrieve the master password for use by the water collection service.
+Google KMS service will be used to store and retrieve the master password key for use by the water collection service.
 To use the KMS service:
 * Create a global keyring: `gcloud kms keyrings create master-password-keyring --location global`
 * Create a key in the keyring: `gcloud kms keys create master-password --location global --keyring master-password-keyring --purpose encryption`
@@ -192,4 +193,4 @@ If you need to re-generate a master password,
 2. Update the `JASYPT_ENCRYPTOR_PASSWORD` environment variable of Google VM instances with the plaintext master password
 
 ## Running the docker container locally
-`docker run -it --rm --env JASYPT_ENCRYPTOR_PASSWORD=$JASYPT_ENCRYPTOR_PASSWORD gcr.io/wcs-195520/wcs:<version>`
+`docker run -it -p 8443:8443 --rm --env JASYPT_ENCRYPTOR_PASSWORD=$JASYPT_ENCRYPTOR_PASSWORD gcr.io/wcs-195520/wcs:<version>`
