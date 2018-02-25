@@ -2,6 +2,7 @@ package org.cybersapien.watercollection.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.ignite.IgniteCache;
+import org.cybersapien.watercollection.processors.ProcessingState;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
@@ -14,6 +15,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -53,14 +56,16 @@ public class WaterCollectionControllerTest {
     @Test
     @WithMockUser(username = "wcsuser", password = "usersecret", roles = "USER")
     public void getWaterCollection() throws Exception {
-        final WaterCollection waterCollection = WaterCollectionCreator.buildMinimal();
-        final String id = waterCollection.getId();
+        final WaterCollection inputWaterCollection = WaterCollectionCreator.buildMinimal();
+        inputWaterCollection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        inputWaterCollection.setProcessingState(ProcessingState.NOT_STARTED.name());
+
 
         // Put water collection in cache
-        waterCollectionCache.put(id, waterCollection);
+        waterCollectionCache.put(inputWaterCollection.getId(), inputWaterCollection);
 
         this.mockClient
-                .perform(get("/v1/water-collections/" + id)
+                .perform(get("/v1/water-collections/" + inputWaterCollection.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

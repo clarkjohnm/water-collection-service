@@ -19,7 +19,6 @@ public class WaterCollectionCreator {
      */
     public static WaterCollection buildMinimal() {
         return new WaterCollection()
-                .withId(UUID.randomUUID().toString().replaceAll("-",""))
                 .withStationId(UUID.randomUUID().toString().replaceAll("-",""))
                 .withDateTime(new Date())
                 .withCollectionVersion(RandomStringUtils.randomNumeric(10))
