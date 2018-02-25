@@ -61,7 +61,7 @@ in the water.
     * Velocity checks
     * ~~TLS mutual authentication changes~~ (**Not needed. basic auth over https is sufficient**)
     * Measurement type or version change
-* No PUT, PATCH or DELETE from the public API. In other words, no update or delete. Collections are facts and will only be created and read but the API.
+* No PUT, PATCH or DELETE from the public API. In other words, no update or delete. Collections are facts and will only be created and read thru the API.
 * Initially, the collection will be done by manually qualified service personnel. Eventually, the collection with be performed by the technician using an appliance.
 * [Question] ~~Should the resource use collections or samples to avoid confusion with a list of resources AKA a collection?~~ **Answer: collections**
 
