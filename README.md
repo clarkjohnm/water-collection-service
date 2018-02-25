@@ -92,7 +92,7 @@ in the water.
 ## Maintainability Considerations:
 * The resource will be versioned by a URL path attribute.
 * The service will allow any supported service version (e.g. v1, v2, etc).
-* ~~The service will maintain a canonical representation of the resource.~~ **The canonical model is the resource model**
+* ~~The service will maintain a canonical representation of the resource.~~ **The canonical model is the latest resource model**
 * The resource will be represented internally by a Java DTO.
 
 ## Serviceability Considerations:
