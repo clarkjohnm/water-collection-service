@@ -6,15 +6,16 @@ import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
-import org.apache.ignite.configuration.BinaryConfiguration;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.ConnectorConfiguration;
 import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
+import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +37,8 @@ public class ApacheIgniteConfig {
     /**
      * Indicator for whether or not to use persistent storage
      */
-    private final boolean enableFilePersistence = false;
+    @Value("${ignite.persistence}")
+    private boolean enableFilePersistence;
 
     /**
      * Ignite configuration
@@ -47,23 +49,23 @@ public class ApacheIgniteConfig {
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public IgniteConfiguration igniteConfiguration() {
         IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
-        igniteConfiguration.setClientMode(false);
 
         // durable file memory persistence
+        DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration();
+        dataStorageConfiguration.getDefaultDataRegionConfiguration().setPersistenceEnabled(enableFilePersistence);
         if (enableFilePersistence){
-            DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration();
-            dataStorageConfiguration.setStoragePath("./data/store");
-            dataStorageConfiguration.setWalArchivePath("./data/walArchive");
-            dataStorageConfiguration.setWalPath("./data/walStore");
-            igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration);
+            dataStorageConfiguration.setStoragePath("/opt/ignite/data/store");
+            dataStorageConfiguration.setWalArchivePath("/opt/ignite/data/walArchive");
+            dataStorageConfiguration.setWalPath("/opt/ignite/data/walStore");
         }
+        igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration);
 
-        // connector configuration
+        // connector configuration for receiving REST requests
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
         connectorConfiguration.setPort(6767);
+        igniteConfiguration.setConnectorConfiguration(connectorConfiguration);
 
-        // common ignite configuration
-        igniteConfiguration.setMetricsLogFrequency(0);
+        // ignite pool configurations
         igniteConfiguration.setQueryThreadPoolSize(2);
         igniteConfiguration.setDataStreamerThreadPoolSize(1);
         igniteConfiguration.setManagementThreadPoolSize(2);
@@ -71,37 +73,51 @@ public class ApacheIgniteConfig {
         igniteConfiguration.setSystemThreadPoolSize(2);
         igniteConfiguration.setRebalanceThreadPoolSize(1);
         igniteConfiguration.setAsyncCallbackPoolSize(2);
-        igniteConfiguration.setPeerClassLoadingEnabled(false);
-        igniteConfiguration.setIgniteInstanceName("WaterCollectionGrid");
-
-        BinaryConfiguration binaryConfiguration = new BinaryConfiguration();
-        binaryConfiguration.setCompactFooter(false);
-        igniteConfiguration.setBinaryConfiguration(binaryConfiguration);
 
         // logging
         Slf4jLogger slf4jLogger = new Slf4jLogger();
         igniteConfiguration.setGridLogger(slf4jLogger);
 
         // cluster tcp configuration
-        TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
         TcpDiscoveryVmIpFinder tcpDiscoveryVmIpFinder = new TcpDiscoveryVmIpFinder();
-
-        // need to be changed when it come to real cluster
+        // This configuration allows up to 10 nodes. This setting needs to be considered for changing for real cluster
+        // TODO Determine how to configure discovery for a cloud environment.
         tcpDiscoveryVmIpFinder.setAddresses(Collections.singletonList("127.0.0.1:47500..47509"));
+
+        TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
+        tcpDiscoverySpi.setClientReconnectDisabled(true);
+        tcpDiscoverySpi.setForceServerMode(true);
         tcpDiscoverySpi.setIpFinder(tcpDiscoveryVmIpFinder);
-        igniteConfiguration.setDiscoverySpi(new TcpDiscoverySpi());
+
+        igniteConfiguration.setDiscoverySpi(tcpDiscoverySpi);
+
+        // Set networking parameters such as connect and read timeouts, tcpNoDelay, etc.
+        TcpCommunicationSpi tcpCommunicationSpi = new TcpCommunicationSpi();
+        tcpCommunicationSpi.setLocalPort(47100);
+        tcpCommunicationSpi.setLocalPortRange(100);
+
+        igniteConfiguration.setCommunicationSpi(tcpCommunicationSpi);
 
         // cache configuration
         CacheConfiguration waterCollections = new CacheConfiguration();
         waterCollections.setCopyOnRead(false);
 
-        // as we have one node for now
+        // Set backups to 0 since we have one node for now
         waterCollections.setBackups(0);
         waterCollections.setAtomicityMode(CacheAtomicityMode.ATOMIC);
         waterCollections.setName(IGNITE_WATER_COLLECTION_CACHE_NAME);
+        //noinspection unchecked
         waterCollections.setIndexedTypes(String.class, WaterCollection.class);
 
         igniteConfiguration.setCacheConfiguration(waterCollections);
+
+        // misc configuration
+        igniteConfiguration.setMetricsLogFrequency(0);
+        igniteConfiguration.setPeerClassLoadingEnabled(false);
+        igniteConfiguration.setClientMode(false);
+
+        igniteConfiguration.setIgniteInstanceName("WaterCollectionGrid");
+
         return igniteConfiguration;
     }
 
@@ -125,6 +141,9 @@ public class ApacheIgniteConfig {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Ignite ignite(@NonNull IgniteConfiguration igniteConfiguration) throws IgniteException {
-        return Ignition.getOrStart(igniteConfiguration);
+        Ignite bean = Ignition.getOrStart(igniteConfiguration);
+        bean.active(true);
+
+        return bean;
     }
 }

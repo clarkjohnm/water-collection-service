@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Workflow for creating water collections
+ * Workflow for creating water collections.
+ * NOTE: A default constructor must be defined for the Camel framework to create this instance of a RouteBuilder. Hence
+ * the suppression below.
  */
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @Slf4j
 @Component
 @Builder
