@@ -8,6 +8,7 @@ import org.apache.camel.test.spring.CamelSpringBootRunner;
 import org.apache.camel.test.spring.DisableJmx;
 import org.apache.ignite.IgniteCache;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
+import org.cybersapien.watercollection.processors.ProcessingState;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.UUID;
 
 /**
  * Integration test for RetrieveWaterCollectionWorkflow
@@ -63,16 +66,19 @@ public class RetrieveWaterCollectionWorkflowTest extends CamelTestSupport {
      */
     @Test
     public void testRetrieveWorkflow() throws Exception {
-        final WaterCollection waterCollection = WaterCollectionCreator.buildMinimal();
-        final String id = waterCollection.getId();
+        final WaterCollection inputWaterCollection = WaterCollectionCreator.buildMinimal();
+        inputWaterCollection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        inputWaterCollection.setProcessingState(ProcessingState.NOT_STARTED.name());
 
         // Put water collection in cache
-        waterCollectionCache.put(id, waterCollection);
+        waterCollectionCache.put(inputWaterCollection.getId(), inputWaterCollection);
 
-        WaterCollection expectedResult =
-                fluentTemplate.withBody(id).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+        WaterCollection outputWaterCollection =
+                fluentTemplate.withBody(inputWaterCollection.getId()).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
 
-        assertNotNull(expectedResult);
+        assertNotNull(outputWaterCollection);
+        assertEquals(inputWaterCollection.getId(), outputWaterCollection.getId());
+        assertNotNull(waterCollectionCache.get(outputWaterCollection.getId()));
     }
 
     /**

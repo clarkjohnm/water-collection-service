@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "ignite.persistence",
+      "type": "java.lang.String",
+      "description": "Defines whether Apache Ignite will persist the cache."
+    }
+  ]
+}
