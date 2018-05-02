@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # Name of Ignite Service used by Kubernetes IP finder for IP addresses lookup.
+  name: ignite
+spec:
+  clusterIP: None
+  ports:
+    - port: 9042
+  selector:
+    # Must be equal to one of the labels set in Ignite pods'
+    # deployment configuration.
+    app: ignite

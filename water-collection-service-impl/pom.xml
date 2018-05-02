@@ -73,6 +73,10 @@
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-slf4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ignite</groupId>
+            <artifactId>ignite-kubernetes</artifactId>
+        </dependency>
 
         <!-- Spring fox -->
         <dependency>
@@ -125,7 +129,7 @@
                 <version>${springboot.version}</version>
                 <configuration>
                     <jvmArguments>
-                        -XX:+UseG1GC -Xmx512m -Xms512m -XX:MaxDirectMemorySize=1G -XX:+DisableExplicitGC -Djava.net.preferIPv4Stack=true
+                        -XX:+UseG1GC -Xmx512m -Xms512m -XX:MaxDirectMemorySize=1G -XX:+DisableExplicitGC -Djava.net.preferIPv4Stack=true -Dspring.profiles.active=${spring.profiles.active}
                     </jvmArguments>
                 </configuration>
             </plugin>
@@ -148,15 +152,16 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <!-- To publish to dockerhub, use the repository definition below -->
+                    <!-- To publish to dockerhub, use the repository on the next line -->
                     <!--<repository>clarkjohnm/wcs</repository>-->
-                    <!-- To publish to the GCP repository, use the repository definition below -->
+
+                    <!-- To publish to the GCP repository, use the repository on the next line -->
                     <repository>gcr.io/wcs-195520/wcs</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                         <IGNITE_HOME_SOURCE>target/classes/ignite-home</IGNITE_HOME_SOURCE>
-                        <SPRING_PROFILE>${spring.profiles.active}</SPRING_PROFILE>
+                        <SPRING_PROFILE>secure,gcp</SPRING_PROFILE>
                     </buildArgs>
                 </configuration>
             </plugin>

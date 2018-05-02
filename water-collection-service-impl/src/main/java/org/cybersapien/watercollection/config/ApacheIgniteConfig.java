@@ -13,15 +13,14 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
-import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
+import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-
-import java.util.Collections;
 
 /**
  * Configuration for Apache Ignite
@@ -37,8 +36,20 @@ public class ApacheIgniteConfig {
     /**
      * Indicator for whether or not to use persistent storage
      */
-    @Value("${ignite.persistence}")
+    @Value("${ignite.persistence.enabled:false}")
     private boolean enableFilePersistence;
+
+    /**
+     * Location of persistent storage
+     */
+    @Value("${ignite.persistence.directory:}")
+    private String persistenceDirectory;
+
+    /**
+     * Discovery Finder
+     */
+    @Autowired
+    private TcpDiscoveryIpFinder tcpDiscoveryIpFinder;
 
     /**
      * Ignite configuration
@@ -54,15 +65,16 @@ public class ApacheIgniteConfig {
         DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration();
         dataStorageConfiguration.getDefaultDataRegionConfiguration().setPersistenceEnabled(enableFilePersistence);
         if (enableFilePersistence){
-            dataStorageConfiguration.setStoragePath("/opt/ignite/data/store");
-            dataStorageConfiguration.setWalArchivePath("/opt/ignite/data/walArchive");
-            dataStorageConfiguration.setWalPath("/opt/ignite/data/walStore");
+            dataStorageConfiguration.setStoragePath(persistenceDirectory + "/data/store");
+            dataStorageConfiguration.setWalArchivePath(persistenceDirectory + "/data/walArchive");
+            dataStorageConfiguration.setWalPath(persistenceDirectory + "/data/walStore");
         }
         igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration);
 
         // connector configuration for receiving REST requests
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
-        connectorConfiguration.setPort(6767);
+        connectorConfiguration.setPort(ConnectorConfiguration.DFLT_TCP_PORT);
+        connectorConfiguration.setPortRange(ConnectorConfiguration.DFLT_PORT_RANGE);
         igniteConfiguration.setConnectorConfiguration(connectorConfiguration);
 
         // ignite pool configurations
@@ -78,23 +90,19 @@ public class ApacheIgniteConfig {
         Slf4jLogger slf4jLogger = new Slf4jLogger();
         igniteConfiguration.setGridLogger(slf4jLogger);
 
-        // cluster tcp configuration
-        TcpDiscoveryVmIpFinder tcpDiscoveryVmIpFinder = new TcpDiscoveryVmIpFinder();
-        // This configuration allows up to 10 nodes. This setting needs to be considered for changing for real cluster
-        // TODO Determine how to configure discovery for a cloud environment.
-        tcpDiscoveryVmIpFinder.setAddresses(Collections.singletonList("127.0.0.1:47500..47509"));
-
         TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
         tcpDiscoverySpi.setClientReconnectDisabled(true);
         tcpDiscoverySpi.setForceServerMode(true);
-        tcpDiscoverySpi.setIpFinder(tcpDiscoveryVmIpFinder);
+        tcpDiscoverySpi.setLocalPort(TcpDiscoverySpi.DFLT_PORT);
+        tcpDiscoverySpi.setLocalPortRange(TcpDiscoverySpi.DFLT_PORT_RANGE);
+        tcpDiscoverySpi.setIpFinder(tcpDiscoveryIpFinder);
 
         igniteConfiguration.setDiscoverySpi(tcpDiscoverySpi);
 
         // Set networking parameters such as connect and read timeouts, tcpNoDelay, etc.
         TcpCommunicationSpi tcpCommunicationSpi = new TcpCommunicationSpi();
-        tcpCommunicationSpi.setLocalPort(47100);
-        tcpCommunicationSpi.setLocalPortRange(100);
+        tcpCommunicationSpi.setLocalPort(TcpCommunicationSpi.DFLT_PORT);
+        tcpCommunicationSpi.setLocalPortRange(TcpCommunicationSpi.DFLT_PORT_RANGE);
 
         igniteConfiguration.setCommunicationSpi(tcpCommunicationSpi);
 

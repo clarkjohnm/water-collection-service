@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: StatefulSet
+metadata:
+  name: wcs-stateful-server
+spec:
+  serviceName: water-collection-service
+  selector:
+    matchLabels:
+      app: water-collection-service # has to match .spec.template.metadata.labels  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: water-collection-service
+    spec:
+      containers:
+      - name: wcs-server
+        image: gcr.io/wcs-195520/wcs:1.0.2-ignite__settings-SNAPSHOT
+        ports:
+        - containerPort: 8443
+        volumeMounts:
+        - name: wcs-persistant-volume
+          mountPath: /opt/ignite
+  volumeClaimTemplates:
+  - metadata:
+      name: wcs-persistant-volume-claim
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Gi
