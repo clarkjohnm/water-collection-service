@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.cybersapien</groupId>
         <artifactId>water-collection-service</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.2-ignite__persistence-SNAPSHOT</version>
     </parent>
 
     <artifactId>water-collection-resource-model</artifactId>
