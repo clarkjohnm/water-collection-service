@@ -25,7 +25,7 @@
         <springfox.version>2.6.1</springfox.version>
         <springboot.version>1.5.9.RELEASE</springboot.version>
         <camel.version>2.20.1</camel.version>
-        <spring.profiles.active>secure</spring.profiles.active>
+        <spring.profiles.active>default</spring.profiles.active>
     </properties>
 
     <modules>
@@ -94,6 +94,11 @@
             <dependency>
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-slf4j</artifactId>
+                <version>${ignite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-kubernetes</artifactId>
                 <version>${ignite.version}</version>
             </dependency>
 

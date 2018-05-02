@@ -104,7 +104,7 @@ in the water.
 
 ## Deployment details
 
-The deployment strategy is to create a Docker image of the service in a Java container. The Docker image will
+The deployment strategy is to create a Docker image of the service in a Java enabled base. The Docker image will
 automatically be created when you run `mvn clean install`. The image will be created with the repository
 `gcr.io/wcs-195520/wcs` along with a version specified by the POM.
 
@@ -120,11 +120,11 @@ be used when creating instances.
 * Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:<version>`
 
 ### Releases
-A release build will use the `secure` Spring profile (i.e.`-Dspring.profiles=secure`) to expose the service 
-via `https` on port 8443. Port 8443 will be accessible on the compute instance using firewall rules.
+A release build will use the `secure` and `gcp` Spring profiles (i.e.`-Dspring.profiles=secure,gcp`) to expose 
+the service via `https` on port 8443. Port 8443 will be accessible on the compute instance using firewall rules.
 Use `gcloud compute firewall-rules list` to view the set of firewall rules.
 
-#### Basic Google Compute Engine steps
+#### Basic Google Compute Engine steps [**DO NOT USE**]
 * Create instance:
 ```
 gcloud beta compute instances create-with-container wcs-compute-1 \
@@ -140,24 +140,41 @@ Use the VM instance UI to do so by editing the container properties,
 
 #### Kubernetes steps
 
-* Create kubernetes cluster: `gcloud container clusters create wcs-cluster --num-nodes=1`
+##### If you want persistent storage, follow the steps below. **WARNING: This costs $$**
+* Create persistent disk: `gcloud compute disks create wcs-pd-standard --type pd-standard`
+* Create Persistant Volume: `kubectl apply -f kb-pv-config.yaml`
+* Create Persistant Volume Claim: `kubectl apply -f kb-pvc-config.yaml`
+* Create Stateful Set: `kubectl apply -f kb-stateful-config.yaml`
+
+##### Cluster setup
+* Create kubernetes cluster: `gcloud container clusters create wcs-cluster --num-nodes=3`
 * Set current cluster: `gcloud config set container/cluster wcs-cluster`
-* Set Kubernetes credentials: `gcloud container clusters get-credentials wcs-cluster`
-* Deploy service using kubernetes: `kubectl run wcs-server --image gcr.io/wcs-195520/wcs:<version> --port 8443`
+* Set cluster credentials: `gcloud container clusters get-credentials wcs-cluster`
+* Create kubernetes role for service account: 
+`kubectl create clusterrolebinding serviceaccounts-cluster-admin --clusterrole=cluster-admin --group=system:serviceaccounts` (**Strongly Discouraged. Without permissions the discovery service call will fail with a 403**)
+* Deploy Ignite Discovery service: `kubectl create -f ignite-discovery-service.yaml`
+* Deploy service using kubernetes: 
+`kubectl run wcs-server --image gcr.io/wcs-195520/wcs:<version> --port 8443 --labels="app=ignite,svc=water-collection-service" --env JASYPT_ENCRYPTOR_PASSWORD=<master password>`
 * Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 443 --target-port 8443`
+
+##### Delete kubernetes service then cluster
+* Run `gcloud container clusters delete wcs-cluster`
+
+##### Useful kubectl commands
+* Run bash on a pod: `kubectl exec <pod name> -i -t -- bash -il`
+* curl command to verify access to discovery service: `curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer <contents of /var/run/secrets/kubernetes.io/serviceaccount/token>" https://kubernetes.default.svc.cluster.local:443/api/v1/namespaces/default/endpoints/wcs-cluster-discovery`
+* Cluster info: `kubectl cluster-info`
+* Start proxy to access remote URL's: `kubectl proxy`
+* Config info: `kubectl config view`
+* Restart pod: `kubectl get pod PODNAME -n default -o yaml | kubectl replace --force -f -`
 * Get service details for external IP to connect over the internet: `kubectl get service`
 
-##### View service logs
-
+###### View service logs
 * Run `kubectl get pods` to get the pod name
 * Run `kubectl logs <pod name>`
 
-##### Delete kubernetes service then cluster
 
-* Run `kubectl delete service wcs-server`
-* Run `gcloud container clusters delete wcs-cluster`
-
-##### Terraform steps [**Not Working**]
+#### Terraform steps [**Not Working**]
 
 Terraform can be used to setup the project and compute instances
 
@@ -192,5 +209,21 @@ If you need to re-generate a master password,
 1. Regenerate the encrypted properties in `credentials.yml` and `application-secure.yml`
 2. Update the `JASYPT_ENCRYPTOR_PASSWORD` environment variable of Google VM instances with the plaintext master password
 
-## Running the docker container locally
+## Running locally
+
+* Run the service from within the `water-collection-service-impl` module: `mvn spring-boot:run`
+
+### Docker
+
+* Run docker in background and use volume mapping:
+`docker run -d --rm --env JASYPT_ENCRYPTOR_PASSWORD=$JASYPT_ENCRYPTOR_PASSWORD -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
+
+* Run docker in foreground and use port mapping:
 `docker run -it -p 8443:8443 --rm --env JASYPT_ENCRYPTOR_PASSWORD=$JASYPT_ENCRYPTOR_PASSWORD gcr.io/wcs-195520/wcs:<version>`
+
+* Attach to a container: `docker exec -it <container id> bash`
+
+## Apache Ignite
+
+* Mgmt console: `docker run -d -p 8090:80 -v <host_absolute_path>:/var/lib/mongodb --name web-console-standalone apacheignite/web-console-standalone`
+* For Grid metrics look for `GridDiscoveryManager` in logs

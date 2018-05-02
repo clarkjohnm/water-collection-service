@@ -20,7 +20,3 @@ management:
 camel:
   springboot:
     name: WaterCollectionCamelContext
-
-# Ignite properties
-ignite:
-  persistence: false
