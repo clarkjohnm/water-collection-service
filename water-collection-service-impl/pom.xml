@@ -162,6 +162,7 @@
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                         <IGNITE_HOME_SOURCE>target/classes/ignite-home</IGNITE_HOME_SOURCE>
                         <SPRING_PROFILE>secure,gcp</SPRING_PROFILE>
+                        <ENV_JASYPT_ENCRYPTOR_PASSWORD>${env.JASYPT_ENCRYPTOR_PASSWORD}</ENV_JASYPT_ENCRYPTOR_PASSWORD>
                     </buildArgs>
                 </configuration>
             </plugin>
