@@ -9,6 +9,11 @@
       "name": "ignite.persistence.directory",
       "type": "java.lang.String",
       "description": "Defines the directory where Apache Ignite will persist data. This setting only applies if persistence is enabled."
+    },
+    {
+      "name": "ignite.work.directory",
+      "type": "java.lang.String",
+      "description": "Defines the work directory of Apache Ignite"
     }
   ]
 }

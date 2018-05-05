@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <ignite.version>2.3.0</ignite.version>
+        <ignite.version>2.4.0</ignite.version>
         <springfox.version>2.6.1</springfox.version>
         <springboot.version>1.5.9.RELEASE</springboot.version>
         <camel.version>2.20.1</camel.version>

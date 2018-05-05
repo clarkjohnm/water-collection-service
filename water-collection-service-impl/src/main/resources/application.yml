@@ -20,3 +20,10 @@ management:
 camel:
   springboot:
     name: WaterCollectionCamelContext
+
+ignite:
+  persistence:
+    enabled: true
+    directory: /opt/ignite/pv
+  work:
+    directory: /opt/ignite/pv/work

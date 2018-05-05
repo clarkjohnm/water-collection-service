@@ -46,6 +46,12 @@ public class ApacheIgniteConfig {
     private String persistenceDirectory;
 
     /**
+     * Work directory
+     */
+    @Value("${ignite.persistence.directory:/opt/ignite}")
+    private String workDirectory;
+
+    /**
      * Discovery Finder
      */
     @Autowired
@@ -123,6 +129,7 @@ public class ApacheIgniteConfig {
         igniteConfiguration.setMetricsLogFrequency(0);
         igniteConfiguration.setPeerClassLoadingEnabled(false);
         igniteConfiguration.setClientMode(false);
+        igniteConfiguration.setWorkDirectory(workDirectory);
 
         igniteConfiguration.setIgniteInstanceName("WaterCollectionGrid");
 
