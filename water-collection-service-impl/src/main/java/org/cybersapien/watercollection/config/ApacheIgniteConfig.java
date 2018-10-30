@@ -6,8 +6,11 @@ import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
+import org.apache.ignite.cache.CacheMode;
+import org.apache.ignite.cache.CacheWriteSynchronizationMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.ConnectorConfiguration;
+import org.apache.ignite.configuration.DataRegionConfiguration;
 import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
@@ -48,7 +51,7 @@ public class ApacheIgniteConfig {
     /**
      * Work directory
      */
-    @Value("${ignite.persistence.directory:/opt/ignite}")
+    @Value("${ignite.work.directory:/opt/ignite}")
     private String workDirectory;
 
     /**
@@ -67,36 +70,37 @@ public class ApacheIgniteConfig {
     public IgniteConfiguration igniteConfiguration() {
         IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
 
-        // durable file memory persistence
+        // Durable file memory persistence
         DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration();
-        dataStorageConfiguration.getDefaultDataRegionConfiguration().setPersistenceEnabled(enableFilePersistence);
+
+        // Set data region metrics
+        DataRegionConfiguration dataRegionConfiguration = dataStorageConfiguration.getDefaultDataRegionConfiguration();
+        dataRegionConfiguration.setMetricsEnabled(true);
+        dataRegionConfiguration.setPersistenceEnabled(enableFilePersistence);
+
         if (enableFilePersistence){
             dataStorageConfiguration.setStoragePath(persistenceDirectory + "/data/store");
             dataStorageConfiguration.setWalArchivePath(persistenceDirectory + "/data/walArchive");
             dataStorageConfiguration.setWalPath(persistenceDirectory + "/data/walStore");
         }
+
         igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration);
 
         // connector configuration for receiving REST requests
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
         connectorConfiguration.setPort(ConnectorConfiguration.DFLT_TCP_PORT);
         connectorConfiguration.setPortRange(ConnectorConfiguration.DFLT_PORT_RANGE);
-        igniteConfiguration.setConnectorConfiguration(connectorConfiguration);
 
-        // ignite pool configurations
-        igniteConfiguration.setQueryThreadPoolSize(2);
-        igniteConfiguration.setDataStreamerThreadPoolSize(1);
-        igniteConfiguration.setManagementThreadPoolSize(2);
-        igniteConfiguration.setPublicThreadPoolSize(2);
-        igniteConfiguration.setSystemThreadPoolSize(2);
-        igniteConfiguration.setRebalanceThreadPoolSize(1);
-        igniteConfiguration.setAsyncCallbackPoolSize(2);
+        igniteConfiguration.setConnectorConfiguration(connectorConfiguration);
 
         // logging
         Slf4jLogger slf4jLogger = new Slf4jLogger();
+
         igniteConfiguration.setGridLogger(slf4jLogger);
 
         TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
+
         tcpDiscoverySpi.setClientReconnectDisabled(true);
         tcpDiscoverySpi.setForceServerMode(true);
         tcpDiscoverySpi.setLocalPort(TcpDiscoverySpi.DFLT_PORT);
@@ -107,26 +111,32 @@ public class ApacheIgniteConfig {
 
         // Set networking parameters such as connect and read timeouts, tcpNoDelay, etc.
         TcpCommunicationSpi tcpCommunicationSpi = new TcpCommunicationSpi();
+
         tcpCommunicationSpi.setLocalPort(TcpCommunicationSpi.DFLT_PORT);
         tcpCommunicationSpi.setLocalPortRange(TcpCommunicationSpi.DFLT_PORT_RANGE);
 
         igniteConfiguration.setCommunicationSpi(tcpCommunicationSpi);
 
         // cache configuration
-        CacheConfiguration waterCollections = new CacheConfiguration();
-        waterCollections.setCopyOnRead(false);
+        CacheConfiguration waterCollectionCacheConfiguration = new CacheConfiguration();
 
-        // Set backups to 0 since we have one node for now
-        waterCollections.setBackups(0);
-        waterCollections.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-        waterCollections.setName(IGNITE_WATER_COLLECTION_CACHE_NAME);
+        waterCollectionCacheConfiguration.setName(IGNITE_WATER_COLLECTION_CACHE_NAME);
+        waterCollectionCacheConfiguration.setStatisticsEnabled(true);
+        waterCollectionCacheConfiguration.setCacheMode(CacheMode.PARTITIONED);
+        waterCollectionCacheConfiguration.setBackups(1);
+        waterCollectionCacheConfiguration.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
+        waterCollectionCacheConfiguration.setGroupName(IGNITE_WATER_COLLECTION_CACHE_NAME + "Group");
+        waterCollectionCacheConfiguration.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+        waterCollectionCacheConfiguration.setCopyOnRead(true);
         //noinspection unchecked
-        waterCollections.setIndexedTypes(String.class, WaterCollection.class);
+        waterCollectionCacheConfiguration.setIndexedTypes(String.class, WaterCollection.class);
 
-        igniteConfiguration.setCacheConfiguration(waterCollections);
+        igniteConfiguration.setCacheConfiguration(waterCollectionCacheConfiguration);
+
+        // ignite pool configurations
 
         // misc configuration
-        igniteConfiguration.setMetricsLogFrequency(0);
+        igniteConfiguration.setRebalanceThreadPoolSize(4);
         igniteConfiguration.setPeerClassLoadingEnabled(false);
         igniteConfiguration.setClientMode(false);
         igniteConfiguration.setWorkDirectory(workDirectory);

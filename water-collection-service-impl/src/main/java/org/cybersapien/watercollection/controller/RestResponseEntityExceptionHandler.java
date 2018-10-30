@@ -100,7 +100,7 @@ public class RestResponseEntityExceptionHandler {
      * @return a ResponseEntity containing the Error response
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Errors> handleGeneralException(Exception exception, WebRequest request) {
+    public ResponseEntity<Errors> handleGeneralException(Exception exception, WebRequest request) throws Exception {
         log.error("", exception);
 
         ResponseEntity<Object> responseEntity = new ResponseEntityExceptionHandler() {}.handleException(exception, request);
