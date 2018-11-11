@@ -171,6 +171,21 @@
                     </buildArgs>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                    </formats>
+                    <instrumentation>
+                        <ignoreMethodAnnotations>
+                            <ignoreMethodAnnotation>lombok.Generated</ignoreMethodAnnotation>
+                        </ignoreMethodAnnotations>
+                    </instrumentation>
+                    <check/>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
