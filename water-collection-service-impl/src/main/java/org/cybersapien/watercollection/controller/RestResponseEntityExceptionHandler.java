@@ -103,6 +103,7 @@ public class RestResponseEntityExceptionHandler {
     public ResponseEntity<Errors> handleGeneralException(Exception exception, WebRequest request) throws Exception {
         log.error("", exception);
 
+        // TODO Null checks!
         ResponseEntity<Object> responseEntity = new ResponseEntityExceptionHandler() {}.handleException(exception, request);
 
         Source source = new Source();

@@ -13,7 +13,7 @@
     {
       "name": "ignite.work.directory",
       "type": "java.lang.String",
-      "description": "Defines the work directory of Apache Ignite"
+      "description": "Defines the work directory of Apache Ignite."
     }
   ]
 }

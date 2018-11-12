@@ -41,7 +41,8 @@ public class SecurityConfig {
                     String password = configurableEnvironment.getProperty(propertyBaseName + ".password", String.class);
                     String roles = configurableEnvironment.getProperty(propertyBaseName + ".roles", String.class);
 
-                    auth.inMemoryAuthentication().withUser(uid).password(password).roles(roles.split(","));
+                    // TODO Null checks!
+                    auth.inMemoryAuthentication().withUser(uid).password("{noop}"+password).roles(roles.split(","));
                     ++index;
                 } else {
                     done = true;

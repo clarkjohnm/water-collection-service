@@ -214,13 +214,14 @@ If you need to re-generate a master password,
 
 * Run the service from within the `water-collection-service-impl` module: `mvn spring-boot:run`
 
-### Docker
+## Docker on localhost
+**[The docker container creation in the POM will need to be modified to set the Spring profiles for localhost]**
 
-* Run docker in background and use volume mapping:
-`docker run -d --rm -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
+* Run docker in background
+`docker run -it --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
 
-* Run docker in foreground and use port mapping:
-`docker run -it -p 8443:8443 --rm gcr.io/wcs-195520/wcs:<version>`
+* Run docker in foreground
+`docker run -d --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
 
 * Attach to a container: `docker exec -it <container id> bash`
 

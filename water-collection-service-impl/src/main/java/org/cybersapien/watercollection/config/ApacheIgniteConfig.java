@@ -166,9 +166,6 @@ public class ApacheIgniteConfig {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Ignite ignite(@NonNull IgniteConfiguration igniteConfiguration) throws IgniteException {
-        Ignite bean = Ignition.getOrStart(igniteConfiguration);
-        bean.active(true);
-
-        return bean;
+        return Ignition.getOrStart(igniteConfiguration);
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,8 +50,7 @@ public class WaterCollectionController {
         List<WaterCollection> result;
 
         try {
-//            result = fluentProducerTemplate.to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(List.class);
-            result = new ArrayList<WaterCollection>();
+            result = fluentProducerTemplate.to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(List.class);
         } catch (CamelExecutionException cex) {
             throw new WebApplicationException(cex);
         }
