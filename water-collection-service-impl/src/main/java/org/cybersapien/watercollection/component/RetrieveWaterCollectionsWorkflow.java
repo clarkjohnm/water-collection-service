@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.cybersapien.watercollection.processors.WaterCollectionsCacheAccessor;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +20,10 @@ public class RetrieveWaterCollectionsWorkflow extends RouteBuilder {
     public static final String WORKFLOW_URI = "direct:" + RetrieveWaterCollectionsWorkflow.class.getName();
 
     /**
-     * Processor to set the new water collection properties
+     * Processor to read the water collection cache
      */
     @Autowired(required = true)
-    private WaterCollectionsCacheAccessor waterCollectionsCacheAccessor;
+    private WaterCollectionsCacheReader waterCollectionsCacheReader;
 
     @Override
     public void configure() throws Exception {
@@ -33,6 +33,6 @@ public class RetrieveWaterCollectionsWorkflow extends RouteBuilder {
 
         worflowDefinition
                 .log("Message received on " + WORKFLOW_URI)
-                .process(waterCollectionsCacheAccessor);
+                .process(waterCollectionsCacheReader);
     }
 }

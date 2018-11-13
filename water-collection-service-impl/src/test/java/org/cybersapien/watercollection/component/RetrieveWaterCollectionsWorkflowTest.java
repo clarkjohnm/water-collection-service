@@ -6,6 +6,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.CamelContextConfiguration;
 import org.apache.camel.test.spring.DisableJmx;
 import org.apache.camel.test.spring.MockEndpoints;
+import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CachePeekMode;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,15 +49,11 @@ import static org.junit.Assert.assertNotNull;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @DisableJmx()
 public class RetrieveWaterCollectionsWorkflowTest {
-    /**
-     * WaterCollection cache
-     */
-    @Autowired
-    private IgniteCache<String, WaterCollection> waterCollectionCache;
+    // Ignite
+    @Inject
+    private Ignite ignite;
 
-    /**
-     * FluentProducerTemplate
-     */
+    // FluentProducerTemplate
     @Autowired
     private FluentProducerTemplate fluentTemplate;
 
@@ -92,6 +90,8 @@ public class RetrieveWaterCollectionsWorkflowTest {
         final WaterCollection inputWaterCollection = WaterCollectionCreator.buildMinimal();
         inputWaterCollection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         inputWaterCollection.setProcessingState(ProcessingState.NOT_STARTED.name());
+
+        IgniteCache<String, WaterCollection> waterCollectionCache = ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
 
         // Put water collection in cache
         waterCollectionCache.put(inputWaterCollection.getId(), inputWaterCollection);

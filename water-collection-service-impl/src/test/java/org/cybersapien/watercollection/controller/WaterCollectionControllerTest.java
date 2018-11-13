@@ -1,7 +1,9 @@
 package org.cybersapien.watercollection.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
+import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.processors.ProcessingState;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
@@ -30,23 +32,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class WaterCollectionControllerTest {
-
-    /**
-     * Jackson ObjectMapper to convert water collection to/from JSON
-     */
+    // Jackson ObjectMapper to convert water collection to/from JSON
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * Mock client
-     */
+    // Mock client
     @Autowired
     private MockMvc mockClient;
 
-    /**
-     * WaterCollection cache
-     */
+    // Ignite
     @Autowired
-    private IgniteCache<String, WaterCollection> waterCollectionCache;
+    private Ignite ignite;
 
     /**
      * Test GET water collection
@@ -60,6 +55,7 @@ public class WaterCollectionControllerTest {
         inputWaterCollection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         inputWaterCollection.setProcessingState(ProcessingState.NOT_STARTED.name());
 
+        IgniteCache<String, WaterCollection> waterCollectionCache = ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
 
         // Put water collection in cache
         waterCollectionCache.put(inputWaterCollection.getId(), inputWaterCollection);

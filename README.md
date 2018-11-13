@@ -217,10 +217,10 @@ If you need to re-generate a master password,
 ## Docker on localhost
 **[The docker container creation in the POM will need to be modified to set the Spring profiles for localhost]**
 
-* Run docker in background
+* Run docker in foreground
 `docker run -it --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
 
-* Run docker in foreground
+* Run docker in background
 `docker run -d --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
 
 * Attach to a container: `docker exec -it <container id> bash`

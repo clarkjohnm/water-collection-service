@@ -2,7 +2,6 @@ package org.cybersapien.watercollection.config;
 
 import lombok.NonNull;
 import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
@@ -144,17 +143,6 @@ public class ApacheIgniteConfig {
         igniteConfiguration.setIgniteInstanceName("WaterCollectionGrid");
 
         return igniteConfiguration;
-    }
-
-    /**
-     * Create WaterCollection Cache
-     *
-     * @return WaterCollection cache
-     */
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public IgniteCache<String, WaterCollection> waterCollectionCache() {
-        return ignite(igniteConfiguration()).getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
     }
 
     /**

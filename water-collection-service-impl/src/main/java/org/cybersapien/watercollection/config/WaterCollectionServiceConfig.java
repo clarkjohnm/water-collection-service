@@ -1,7 +1,7 @@
 package org.cybersapien.watercollection.config;
 
 import org.cybersapien.watercollection.processors.NewWaterCollectionPropertiesSetter;
-import org.cybersapien.watercollection.processors.WaterCollectionsCacheAccessor;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,14 +24,14 @@ public class WaterCollectionServiceConfig {
     }
 
     /**
-     * Create WaterCollectionsCacheAccessor Processor
+     * Create WaterCollectionsCacheReader Processor
      *
-     * @return WaterCollectionsCacheAccessor Processor
+     * @return WaterCollectionsCacheReader Processor
      */
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public WaterCollectionsCacheAccessor waterCollectionsCacheAccessor() {
-        return new WaterCollectionsCacheAccessor();
+    public WaterCollectionsCacheReader waterCollectionsCacheReader() {
+        return new WaterCollectionsCacheReader();
     }
 
 }
