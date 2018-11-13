@@ -14,11 +14,11 @@ import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.config.ApacheIgniteDefaultConfig;
 import org.cybersapien.watercollection.config.WaterCollectionServiceConfig;
 import org.cybersapien.watercollection.processors.ProcessingState;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -49,16 +49,23 @@ import static org.junit.Assert.assertNotNull;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @DisableJmx()
 public class RetrieveWaterCollectionsWorkflowTest {
-    // Ignite
+    /**
+     * Ignite
+     */
     @Inject
     private Ignite ignite;
 
-    // FluentProducerTemplate
-    @Autowired
+    /**
+     * FluentProducerTemplate
+     */
+    @Inject
     private FluentProducerTemplate fluentTemplate;
 
     @TestConfiguration
     static class Config {
+        @Inject
+        WaterCollectionsCacheReader waterCollectionsCacheReader;
+
         @Bean
         CamelContextConfiguration contextConfiguration() {
             return new CamelContextConfiguration() {
@@ -76,7 +83,7 @@ public class RetrieveWaterCollectionsWorkflowTest {
 
         @Bean
         RouteBuilder routeBuilder() {
-            return new RetrieveWaterCollectionsWorkflow();
+            return new RetrieveWaterCollectionsWorkflow(waterCollectionsCacheReader);
         }
     }
 

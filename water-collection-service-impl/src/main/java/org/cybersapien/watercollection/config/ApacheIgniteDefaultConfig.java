@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 @Profile("default")
 public class ApacheIgniteDefaultConfig {
-
     /**
      * Directory used for cluster discovery data
      */

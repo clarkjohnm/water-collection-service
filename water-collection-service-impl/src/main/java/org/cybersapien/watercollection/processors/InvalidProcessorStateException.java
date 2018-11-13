@@ -3,7 +3,7 @@ package org.cybersapien.watercollection.processors;
 /**
  * Exception to indicate the context state given to the processor is invalid
  */
-public class InvalidProcessorStateException extends Exception {
+class InvalidProcessorStateException extends Exception {
     private static final long serialVersionUID = -2018353134782990312L;
 
     /**

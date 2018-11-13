@@ -31,7 +31,6 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/v1/water-collections")
 public class WaterCollectionController {
-
     /**
      * The camel producer template
      */

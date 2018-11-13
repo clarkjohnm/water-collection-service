@@ -9,13 +9,14 @@ import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
 import org.apache.camel.model.RouteDefinition;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
 import org.cybersapien.watercollection.processors.NewWaterCollectionPropertiesSetter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * Workflow for creating water collections.
  * NOTE: A default constructor must be defined for the Camel framework to create this instance of a RouteBuilder. Hence
- * the suppression below.
+ * the SuppressWarnings below.
  */
 @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @Slf4j
@@ -30,7 +31,7 @@ public class CreateWaterCollectionWorkflow extends RouteBuilder {
     /**
      * Processor to set the new water collection properties
      */
-    @Autowired(required = true)
+    @Inject
     private NewWaterCollectionPropertiesSetter newWaterCollectionPropertiesSetter;
 
     @Override

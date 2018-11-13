@@ -1,16 +1,20 @@
 package org.cybersapien.watercollection.component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Workflow for getting existing water collections
+ * NOTE: A default constructor must be defined for the Camel framework to create this instance of a RouteBuilder. Hence
+ * the SuppressWarnings below.
  */
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class RetrieveWaterCollectionsWorkflow extends RouteBuilder {
@@ -22,8 +26,7 @@ public class RetrieveWaterCollectionsWorkflow extends RouteBuilder {
     /**
      * Processor to read the water collection cache
      */
-    @Autowired(required = true)
-    private WaterCollectionsCacheReader waterCollectionsCacheReader;
+    private final WaterCollectionsCacheReader waterCollectionsCacheReader;
 
     @Override
     public void configure() throws Exception {

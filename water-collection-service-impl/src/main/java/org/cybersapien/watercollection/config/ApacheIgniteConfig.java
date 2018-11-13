@@ -1,6 +1,7 @@
 package org.cybersapien.watercollection.config;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
@@ -17,7 +18,6 @@ import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +27,9 @@ import org.springframework.context.annotation.Scope;
 /**
  * Configuration for Apache Ignite
  */
+@RequiredArgsConstructor
 @Configuration
 public class ApacheIgniteConfig {
-
     /**
      * Cache name for water collections
      */
@@ -56,8 +56,7 @@ public class ApacheIgniteConfig {
     /**
      * Discovery Finder
      */
-    @Autowired
-    private TcpDiscoveryIpFinder tcpDiscoveryIpFinder;
+    private final TcpDiscoveryIpFinder tcpDiscoveryIpFinder;
 
     /**
      * Ignite configuration

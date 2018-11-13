@@ -1,6 +1,7 @@
 package org.cybersapien.watercollection.processors;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.ignite.Ignite;
@@ -10,15 +11,17 @@ import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 
 import javax.cache.Cache;
-import javax.inject.Inject;
 import java.util.List;
 
 /**
  * Processor to read the water collection cache.
  */
+@RequiredArgsConstructor
 public class WaterCollectionsCacheReader implements Processor {
-    @Inject
-    private Ignite ignite;
+    /**
+     * Ignite
+     */
+    private final Ignite ignite;
 
     @Override
     public void process(@NonNull Exchange exchange) throws Exception {

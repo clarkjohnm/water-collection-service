@@ -18,7 +18,6 @@ import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollect
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -48,12 +47,16 @@ import static org.junit.Assert.assertNotNull;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @DisableJmx()
 public class RetrieveWaterCollectionWorkflowTest {
-    // Ignite
+    /**
+     * Ignite
+     */
     @Inject
     private Ignite ignite;
 
-    // FluentProducerTemplate
-    @Autowired
+    /**
+     * FluentProducerTemplate
+     */
+    @Inject
     private FluentProducerTemplate fluentTemplate;
 
     @TestConfiguration
