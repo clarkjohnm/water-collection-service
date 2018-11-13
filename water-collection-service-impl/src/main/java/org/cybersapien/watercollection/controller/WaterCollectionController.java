@@ -7,6 +7,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.FluentProducerTemplate;
 import org.cybersapien.watercollection.component.CreateWaterCollectionWorkflow;
 import org.cybersapien.watercollection.component.RetrieveWaterCollectionWorkflow;
+import org.cybersapien.watercollection.component.RetrieveWaterCollectionsWorkflow;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,14 +44,14 @@ public class WaterCollectionController {
      * @throws Exception if an error occurs during processing
      */
     @ApiOperation(value = "Get a list of water collections",
-            notes = "By default, the last 10 submitted water collections are returned")
+            notes = "By default, the last 1024 submitted water collections are returned")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public List<WaterCollection> getWaterCollections() throws Exception {
         List<WaterCollection> result;
 
         try {
-            result = fluentProducerTemplate.to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(List.class);
+            result = fluentProducerTemplate.to(RetrieveWaterCollectionsWorkflow.WORKFLOW_URI).request(List.class);
         } catch (CamelExecutionException cex) {
             throw new WebApplicationException(cex);
         }
