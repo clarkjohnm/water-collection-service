@@ -1,13 +1,17 @@
 package org.cybersapien.watercollection.config;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.ignite.Ignite;
 import org.cybersapien.watercollection.processors.NewWaterCollectionPropertiesSetter;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheAdder;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheBulkReader;
 import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
+import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import javax.cache.Cache;
 
 /**
  * Configuration for the water collection service
@@ -16,12 +20,12 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 public class WaterCollectionServiceConfig {
     /**
-     * Ignite
+     * Water Collection cache
      */
-     private final Ignite ignite;
+    private final Cache<String, WaterCollection> waterCollectionCache;
 
     /**
-     * Create NewWaterCollectionPropertiesSetter Processor
+     * Get NewWaterCollectionPropertiesSetter Processor
      *
      * @return NewWaterCollectionPropertiesSetter Processor
      */
@@ -32,14 +36,35 @@ public class WaterCollectionServiceConfig {
     }
 
     /**
-     * Create WaterCollectionsCacheReader Processor
+     * Get WaterCollectionsCacheAdder Processor
+     *
+     * @return WaterCollectionsCacheAdder Processor
+     */
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public WaterCollectionsCacheAdder waterCollectionsCacheAdder() {
+        return new WaterCollectionsCacheAdder(waterCollectionCache);
+    }
+
+    /**
+     * Get WaterCollectionsCacheReader Processor
      *
      * @return WaterCollectionsCacheReader Processor
      */
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public WaterCollectionsCacheReader waterCollectionsCacheReader() {
-        return new WaterCollectionsCacheReader(ignite);
+        return new WaterCollectionsCacheReader(waterCollectionCache);
     }
 
+    /**
+     * Get WaterCollectionsCacheBulkReader Processor
+     *
+     * @return WaterCollectionsCacheBulkReader Processor
+     */
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public WaterCollectionsCacheBulkReader WaterCollectionsCacheBulkReader() {
+        return new WaterCollectionsCacheBulkReader(waterCollectionCache);
+    }
 }

@@ -7,13 +7,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.CamelContextConfiguration;
 import org.apache.camel.test.spring.DisableJmx;
 import org.apache.camel.test.spring.MockEndpoints;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
 import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.config.ApacheIgniteDefaultConfig;
 import org.cybersapien.watercollection.config.WaterCollectionServiceConfig;
 import org.cybersapien.watercollection.processors.ProcessingState;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
@@ -25,11 +24,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.cache.Cache;
 import javax.inject.Inject;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Integration test for RetrieveWaterCollectionWorkflow
@@ -48,10 +49,10 @@ import static org.junit.Assert.assertNotNull;
 @DisableJmx()
 public class RetrieveWaterCollectionWorkflowTest {
     /**
-     * Ignite
+     * Water collection cache
      */
     @Inject
-    private Ignite ignite;
+    private Cache<String, WaterCollection> waterCollectionCache;
 
     /**
      * FluentProducerTemplate
@@ -61,6 +62,9 @@ public class RetrieveWaterCollectionWorkflowTest {
 
     @TestConfiguration
     static class Config {
+        @Inject
+        WaterCollectionsCacheReader waterCollectionsCacheReader;
+
         @Bean
         CamelContextConfiguration contextConfiguration() {
             return new CamelContextConfiguration() {
@@ -78,7 +82,7 @@ public class RetrieveWaterCollectionWorkflowTest {
 
         @Bean
         RouteBuilder routeBuilder() {
-            return new RetrieveWaterCollectionWorkflow();
+            return new RetrieveWaterCollectionWorkflow(waterCollectionsCacheReader);
         }
     }
 
@@ -92,8 +96,6 @@ public class RetrieveWaterCollectionWorkflowTest {
         final WaterCollection inputWaterCollection = WaterCollectionCreator.buildMinimal();
         inputWaterCollection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         inputWaterCollection.setProcessingState(ProcessingState.NOT_STARTED.name());
-
-        IgniteCache<String, WaterCollection> waterCollectionCache = ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
 
         // Put water collection in cache
         waterCollectionCache.put(inputWaterCollection.getId(), inputWaterCollection);
@@ -113,9 +115,19 @@ public class RetrieveWaterCollectionWorkflowTest {
      */
     @Test(expected = CamelExecutionException.class)
     public void testRetrieveWorkflowWithNullId() throws Exception {
-        WaterCollection expectedResult =
-                fluentTemplate.withBody(null).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+        fluentTemplate.withBody(null).to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+    }
 
-        assertNotNull(expectedResult);
+    /**
+     * Test Retrieve Workflow with unknown WaterCollection id
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testRetrieveWorkflowWithUnknownId() throws Exception {
+        WaterCollection expectedResult =
+                fluentTemplate.withBody("id of nonexistent").to(RetrieveWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
+
+        assertNull(expectedResult);
     }
 }

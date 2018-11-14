@@ -7,14 +7,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.CamelContextConfiguration;
 import org.apache.camel.test.spring.DisableJmx;
 import org.apache.camel.test.spring.MockEndpoints;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
 import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.config.ApacheIgniteDefaultConfig;
 import org.cybersapien.watercollection.config.WaterCollectionServiceConfig;
 import org.cybersapien.watercollection.processors.NewWaterCollectionPropertiesSetter;
 import org.cybersapien.watercollection.processors.ProcessingState;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheAdder;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
@@ -26,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.cache.Cache;
 import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
@@ -41,17 +41,17 @@ import static org.junit.Assert.assertNotNull;
         ApacheIgniteConfig.class,
         ApacheIgniteDefaultConfig.class,
         WaterCollectionServiceConfig.class
-        })
+})
 @EnableAutoConfiguration
 @MockEndpoints
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @DisableJmx()
 public class CreateWaterCollectionWorkflowTest {
     /**
-     * Ignite
+     * Water collection cache
      */
     @Inject
-    private Ignite ignite;
+    private Cache<String, WaterCollection> waterCollectionCache;
 
     /**
      * FluentProducerTemplate
@@ -61,6 +61,12 @@ public class CreateWaterCollectionWorkflowTest {
 
     @TestConfiguration
     static class Config {
+        @Inject
+        NewWaterCollectionPropertiesSetter newWaterCollectionPropertiesSetter;
+
+        @Inject
+        WaterCollectionsCacheAdder waterCollectionsCacheAdder;
+
         @Bean
         CamelContextConfiguration contextConfiguration() {
             return new CamelContextConfiguration() {
@@ -78,9 +84,7 @@ public class CreateWaterCollectionWorkflowTest {
 
         @Bean
         RouteBuilder routeBuilder() {
-            return new CreateWaterCollectionWorkflow.CreateWaterCollectionWorkflowBuilder()
-                    .newWaterCollectionPropertiesSetter(new NewWaterCollectionPropertiesSetter())
-                    .build();
+            return new CreateWaterCollectionWorkflow(newWaterCollectionPropertiesSetter, waterCollectionsCacheAdder);
         }
     }
 
@@ -95,8 +99,6 @@ public class CreateWaterCollectionWorkflowTest {
 
         WaterCollection outputWaterCollection =
                 fluentTemplate.withBody(inputWaterCollection).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).request(WaterCollection.class);
-
-        IgniteCache<String, WaterCollection> waterCollectionCache = ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
 
         assertNotNull(outputWaterCollection);
         assertNotNull(outputWaterCollection.getId());

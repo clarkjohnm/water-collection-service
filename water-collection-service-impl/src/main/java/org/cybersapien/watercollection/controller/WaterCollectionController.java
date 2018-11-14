@@ -50,6 +50,7 @@ public class WaterCollectionController {
         List<WaterCollection> result;
 
         try {
+            //noinspection unchecked
             result = fluentProducerTemplate.to(RetrieveWaterCollectionsWorkflow.WORKFLOW_URI).request(List.class);
         } catch (CamelExecutionException cex) {
             throw new WebApplicationException(cex);

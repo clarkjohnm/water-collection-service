@@ -7,12 +7,16 @@ import org.apache.camel.Processor;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 
 import javax.cache.Cache;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Processor to read the water collection cache.
  */
+@Named
 @RequiredArgsConstructor
-public class WaterCollectionsCacheReader implements Processor {
+public class WaterCollectionsCacheBulkReader implements Processor {
     /**
      * Water Collection cache
      */
@@ -29,7 +33,11 @@ public class WaterCollectionsCacheReader implements Processor {
             return;
         }
 
-        WaterCollection waterCollection = waterCollectionCache.get(exchange.getIn().getMandatoryBody(String.class));
-        exchange.getOut().setBody(waterCollection, WaterCollection.class);
+        // TODO honor paging in the request. Right now the default page size (1024?) is used.
+        List<WaterCollection> waterCollections = new ArrayList<>();
+        for (Cache.Entry<String, WaterCollection> entry : waterCollectionCache) {
+            waterCollections.add(entry.getValue());
+        }
+        exchange.getOut().setBody(waterCollections, List.class);
     }
 }

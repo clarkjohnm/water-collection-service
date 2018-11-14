@@ -12,7 +12,7 @@ import javax.cache.Cache;
  * Processor to read the water collection cache.
  */
 @RequiredArgsConstructor
-public class WaterCollectionsCacheReader implements Processor {
+public class WaterCollectionsCacheAdder implements Processor {
     /**
      * Water Collection cache
      */
@@ -29,7 +29,7 @@ public class WaterCollectionsCacheReader implements Processor {
             return;
         }
 
-        WaterCollection waterCollection = waterCollectionCache.get(exchange.getIn().getMandatoryBody(String.class));
-        exchange.getOut().setBody(waterCollection, WaterCollection.class);
+        WaterCollection waterCollection = exchange.getIn().getMandatoryBody(WaterCollection.class);
+        waterCollectionCache.put(waterCollection.getId(), waterCollection);
     }
 }

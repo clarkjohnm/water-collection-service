@@ -8,6 +8,7 @@ import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
+import org.apache.ignite.cluster.ClusterNode;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.ConnectorConfiguration;
 import org.apache.ignite.configuration.DataRegionConfiguration;
@@ -23,6 +24,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import javax.cache.Cache;
+import java.util.Collection;
 
 /**
  * Configuration for Apache Ignite
@@ -145,6 +149,17 @@ public class ApacheIgniteConfig {
     }
 
     /**
+     * Create WaterCollection Cache
+     *
+     * @return WaterCollection cache
+     */
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public Cache<String, WaterCollection> waterCollectionCache() {
+        return ignite(igniteConfiguration()).getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
+    }
+
+    /**
      * Ignite instance
      * @param igniteConfiguration the ignite configuration
      * @return the ignite instance
@@ -153,6 +168,16 @@ public class ApacheIgniteConfig {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Ignite ignite(@NonNull IgniteConfiguration igniteConfiguration) throws IgniteException {
-        return Ignition.getOrStart(igniteConfiguration);
+        Ignite igniteBean = Ignition.getOrStart(igniteConfiguration);
+
+        if (!igniteBean.cluster().active()) {
+            igniteBean.cluster().active(true);
+            // Get all server nodes that are already up and running.
+            Collection<ClusterNode> nodes = igniteBean.cluster().forServers().nodes();
+            // Set the baseline topology that is represented by these nodes.
+            igniteBean.cluster().setBaselineTopology(nodes);
+        }
+
+        return igniteBean;
     }
 }

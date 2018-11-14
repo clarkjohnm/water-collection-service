@@ -1,12 +1,11 @@
 package org.cybersapien.watercollection.component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.ignite.IgniteConstants;
-import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
 import org.apache.camel.model.RouteDefinition;
-import org.cybersapien.watercollection.config.ApacheCamelConfig;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,11 +13,17 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RetrieveWaterCollectionWorkflow extends RouteBuilder {
     /**
      * The URI of the workflow used by producer templates to start the workflow
      */
     public static final String WORKFLOW_URI = "direct:" + RetrieveWaterCollectionWorkflow.class.getName();
+
+    /**
+     * Processor to read the water collection cache
+     */
+    private final WaterCollectionsCacheReader waterCollectionsCacheReader;
 
     @Override
     public void configure() throws Exception {
@@ -28,9 +33,6 @@ public class RetrieveWaterCollectionWorkflow extends RouteBuilder {
 
         worflowDefinition
                 .log("Message received on " + WORKFLOW_URI)
-
-                .setHeader(IgniteConstants.IGNITE_CACHE_OPERATION, constant(IgniteCacheOperation.GET))
-                .setHeader(IgniteConstants.IGNITE_CACHE_KEY, simple("${body}"))
-                .to(ApacheCamelConfig.WATER_COLLECTION_CACHE_URI);
+                .process(waterCollectionsCacheReader);
     }
 }

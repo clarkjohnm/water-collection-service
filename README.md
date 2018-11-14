@@ -133,17 +133,17 @@ will expose the service via `https` on port 8443.
 `kubectl create clusterrolebinding serviceaccounts-cluster-admin --clusterrole=cluster-admin --group=system:serviceaccounts` (**Strongly Discouraged. However, without permissions, the discovery service call will fail with a 403**)
 * Deploy Ignite Discovery service: `kubectl create -f ignite-discovery-service.yaml`
 
-###### Deploy stateful service
+###### Deploy stateless service **[Preferred]**
+* Deploy **stateless** service using kubernetes: 
+`kubectl run wcs-server --image gcr.io/wcs-195520/wcs:<version> --port 8443 --labels="app=ignite,svc=water-collection-service"`
+* Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 443 --target-port 8443`
+
+###### Deploy stateful service **[Optional]**
 **NOTE: Container image string needs to be modified in `kb-stateful-config.yaml` before creating stateful set**
 
 **TODO: generate `kb-stateful-config.yaml` during build to specify image name**
 * Deploy **stateful** water collection service as stateful set: `kubectl apply -f kb-stateful-config.yaml` **WARNING: This costs $$**
 * Expose service: `kubectl apply -f kb-loadbalancer-config.yaml`
-
-###### Deploy stateless service
-* Deploy **stateless** service using kubernetes: 
-`kubectl run wcs-server --image gcr.io/wcs-195520/wcs:<version> --port 8443 --labels="app=ignite,svc=water-collection-service"`
-* Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 443 --target-port 8443`
 
 ##### Delete kubernetes service then cluster
 * Run `gcloud container clusters delete wcs-cluster`
@@ -154,12 +154,10 @@ will expose the service via `https` on port 8443.
 * Cluster info: `kubectl cluster-info`
 * Start proxy to access remote URL's: `kubectl proxy`
 * Config info: `kubectl config view`
-* Restart pod: `kubectl get pod PODNAME -n default -o yaml | kubectl replace --force -f -`
+* List pods: `kubectl get pods`
+* View pod logs: `kubectl logs <pod name>`
+* Restart pod: `kubectl get pod <pod name> -n default -o yaml | kubectl replace --force -f -`
 * Get service details for external IP to connect over the internet: `kubectl get service`
-
-###### View service logs
-* Run `kubectl get pods` to get the pod name
-* Run `kubectl logs <pod name>`
 
 #### Basic Google Compute Engine steps (w/o Kubernetes)
 * Create instance:

@@ -1,9 +1,6 @@
 package org.cybersapien.watercollection.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
-import org.cybersapien.watercollection.config.ApacheIgniteConfig;
 import org.cybersapien.watercollection.processors.ProcessingState;
 import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
@@ -17,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.cache.Cache;
 import javax.inject.Inject;
 import java.util.UUID;
 
@@ -44,10 +42,10 @@ public class WaterCollectionControllerTest {
     private MockMvc mockClient;
 
     /**
-     * Ignite
+     * Water collection cache
      */
     @Inject
-    private Ignite ignite;
+    private Cache<String, WaterCollection> waterCollectionCache;
 
     /**
      * Test GET water collection
@@ -60,8 +58,6 @@ public class WaterCollectionControllerTest {
         final WaterCollection inputWaterCollection = WaterCollectionCreator.buildMinimal();
         inputWaterCollection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         inputWaterCollection.setProcessingState(ProcessingState.NOT_STARTED.name());
-
-        IgniteCache<String, WaterCollection> waterCollectionCache = ignite.getOrCreateCache(ApacheIgniteConfig.IGNITE_WATER_COLLECTION_CACHE_NAME);
 
         // Put water collection in cache
         waterCollectionCache.put(inputWaterCollection.getId(), inputWaterCollection);
