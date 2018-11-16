@@ -172,11 +172,12 @@ public class ApacheIgniteConfig {
 
         if (!igniteBean.cluster().active()) {
             igniteBean.cluster().active(true);
-            // Get all server nodes that are already up and running.
-            Collection<ClusterNode> nodes = igniteBean.cluster().forServers().nodes();
-            // Set the baseline topology that is represented by these nodes.
-            igniteBean.cluster().setBaselineTopology(nodes);
         }
+
+        // Get all server nodes that are already up and running.
+        Collection<ClusterNode> nodes = igniteBean.cluster().forServers().nodes();
+        // Set the baseline topology that is represented by these nodes.
+        igniteBean.cluster().setBaselineTopology(nodes);
 
         return igniteBean;
     }

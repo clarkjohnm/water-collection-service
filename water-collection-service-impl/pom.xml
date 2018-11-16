@@ -144,7 +144,7 @@
                 <version>${springboot.version}</version>
                 <configuration>
                     <jvmArguments>
-                        -XX:+UseG1GC -Xmx512m -Xms512m -XX:MaxDirectMemorySize=1G -XX:+DisableExplicitGC -Djava.net.preferIPv4Stack=true -Dspring.profiles.active=${spring.profiles.active}
+                        -server -Xms512m -Xmx2g -XX:MaxDirectMemorySize=2g -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ScavengeBeforeFullGC -XX:+DisableExplicitGC -Djava.net.preferIPv4Stack=true -Dspring.profiles.active=${spring.profiles.active}
                     </jvmArguments>
                 </configuration>
             </plugin>

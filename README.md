@@ -116,9 +116,6 @@ A project `water-collection-service` with project id `wcs-195520` already exists
 instances or for creating a cluster using `kubernetes`. Googles' container optimized images with Docker support will
 be used when creating instances.
 
-* Set current project: `gcloud config set project wcs-195520`
-* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:<version>`
-
 ### Releases
 A release build will use the `secure` and `gcp` Spring profiles (i.e.`-Dspring.profiles=secure,gcp`). The `secure` profile
 will expose the service via `https` on port 8443.
@@ -126,7 +123,9 @@ will expose the service via `https` on port 8443.
 #### Kubernetes steps
 
 ##### Cluster setup
-* Create kubernetes cluster: `gcloud container clusters create wcs-cluster`
+* Set current project: `gcloud config set project wcs-195520`
+* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:<version>`
+* Create kubernetes cluster: `gcloud container clusters create wcs-cluster --machine-type=n1-highmem-4`
 * Set current cluster: `gcloud config set container/cluster wcs-cluster`
 * Set cluster credentials: `gcloud container clusters get-credentials wcs-cluster`
 * Create kubernetes role for service account: 
@@ -149,14 +148,14 @@ will expose the service via `https` on port 8443.
 * Run `gcloud container clusters delete wcs-cluster`
 
 ##### Useful kubectl commands
+* List pods: `kubectl get pods`
+* View pod logs: `kubectl logs <pod name>`
 * Run bash on a pod: `kubectl exec <pod name> -i -t -- bash -il`
+* Restart pod: `kubectl get pod <pod name> -n default -o yaml | kubectl replace --force -f -`
 * curl command to verify access to discovery service: `curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer <contents of /var/run/secrets/kubernetes.io/serviceaccount/token>" https://kubernetes.default.svc.cluster.local:443/api/v1/namespaces/default/endpoints/wcs-cluster-discovery`
 * Cluster info: `kubectl cluster-info`
 * Start proxy to access remote URL's: `kubectl proxy`
 * Config info: `kubectl config view`
-* List pods: `kubectl get pods`
-* View pod logs: `kubectl logs <pod name>`
-* Restart pod: `kubectl get pod <pod name> -n default -o yaml | kubectl replace --force -f -`
 * Get service details for external IP to connect over the internet: `kubectl get service`
 
 #### Basic Google Compute Engine steps (w/o Kubernetes)
