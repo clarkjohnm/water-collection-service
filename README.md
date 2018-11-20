@@ -100,7 +100,7 @@ in the water.
 * The service will log request metrics
 
 ## Online API documentation
-**Coming soon. (SpringFox has been found to be a POS and outright refuses to process swagger annotations while a swagger.json can be perfectly generated)**
+**http://localhost:8080/water-collection-service/api/swagger.json**
 
 ## Deployment details
 

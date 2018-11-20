@@ -10,6 +10,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.cache.Cache;
 
@@ -66,5 +68,16 @@ public class WaterCollectionServiceConfig {
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public WaterCollectionsCacheBulkReader WaterCollectionsCacheBulkReader() {
         return new WaterCollectionsCacheBulkReader(waterCollectionCache);
+    }
+
+    @Bean
+    public WebMvcConfigurer webMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/api/**")
+                        .addResourceLocations("classpath:/api/");
+            }
+        };
     }
 }

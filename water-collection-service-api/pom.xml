@@ -42,7 +42,7 @@
                                     <name>MIT License</name>
                                 </license>
                             </info>
-                            <swaggerDirectory>${project.basedir}/src/main/resources</swaggerDirectory>
+                            <swaggerDirectory>${project.basedir}/src/main/resources/api</swaggerDirectory>
                         </apiSource>
                     </apiSources>
                 </configuration>
