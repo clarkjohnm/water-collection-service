@@ -23,7 +23,7 @@
                     <serializable>true</serializable>
                     <outputDirectory>${project.build.directory}/generated-sources/json</outputDirectory>
                     <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
-                    <targetPackage>org.cybersapien.watercollection.service.datatypes</targetPackage>
+                    <targetPackage>org.cybersapien.watercollection.service.v1.model</targetPackage>
                 </configuration>
                 <executions>
                     <execution>

@@ -1,9 +1,9 @@
 package org.cybersapien.watercollection.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.cybersapien.watercollection.service.datatypes.error.Error;
-import org.cybersapien.watercollection.service.datatypes.error.Errors;
-import org.cybersapien.watercollection.service.datatypes.error.Source;
+import org.cybersapien.watercollection.service.v1.model.error.Error;
+import org.cybersapien.watercollection.service.v1.model.error.Errors;
+import org.cybersapien.watercollection.service.v1.model.error.Source;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;

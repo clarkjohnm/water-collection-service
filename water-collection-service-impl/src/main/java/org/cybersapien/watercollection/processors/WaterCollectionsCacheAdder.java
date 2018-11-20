@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.service.v1.model.WaterCollection;
 
 import javax.cache.Cache;
 

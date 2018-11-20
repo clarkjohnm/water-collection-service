@@ -1,6 +1,5 @@
 package org.cybersapien.watercollection.controller;
 
-import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelExecutionException;
@@ -8,7 +7,8 @@ import org.apache.camel.FluentProducerTemplate;
 import org.cybersapien.watercollection.component.CreateWaterCollectionWorkflow;
 import org.cybersapien.watercollection.component.RetrieveWaterCollectionWorkflow;
 import org.cybersapien.watercollection.component.RetrieveWaterCollectionsWorkflow;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.service.v1.api.WaterCollectionResource;
+import org.cybersapien.watercollection.service.v1.model.WaterCollection;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,23 +30,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/v1/water-collections")
-public class WaterCollectionController {
+public class WaterCollectionController implements WaterCollectionResource {
     /**
      * The camel producer template
      */
     private final FluentProducerTemplate fluentProducerTemplate;
 
-    /**
-     * Get a water collection
-     *
-     * @return a list of water collection instances
-     * @throws Exception if an error occurs during processing
-     */
-    @ApiOperation(value = "Get a list of water collections",
-            notes = "By default, the last 1024 submitted water collections are returned")
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Override
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<WaterCollection> getWaterCollections() throws Exception {
+    public List<WaterCollection> getWaterCollections() throws WebApplicationException {
         List<WaterCollection> result;
 
         try {
@@ -63,17 +56,10 @@ public class WaterCollectionController {
         }
     }
 
-    /**
-     * Get a water collection
-     *
-     * @param id The id of the water collection
-     * @return a water collection instance
-     * @throws Exception if an error occurs during processing
-     */
-    @ApiOperation(value = "Get a water collection by id")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Override
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public WaterCollection getWaterCollection(@PathVariable String id) throws Exception {
+    public WaterCollection getWaterCollectionById(@PathVariable String id) throws WebApplicationException {
         WaterCollection result;
 
         try {
@@ -89,17 +75,10 @@ public class WaterCollectionController {
         }
     }
 
-    /**
-     * Create a water collection so it can be further analyzed
-     *
-     * @param waterCollection A water collection resource containing the client writable properties according to the JSON contract
-     * @return the water collection with properties such as id which are set by the service.
-     * @throws Exception if an exception occurred.
-     */
-    @ApiOperation(value = "Create a water collection")
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Override
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public WaterCollection postWaterCollection(@RequestBody @Valid WaterCollection waterCollection) throws Exception {
+    public WaterCollection postWaterCollection(@RequestBody @Valid WaterCollection waterCollection) throws WebApplicationException {
         WaterCollection result;
 
         try {

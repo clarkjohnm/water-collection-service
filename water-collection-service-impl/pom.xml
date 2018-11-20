@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>org.cybersapien</groupId>
-            <artifactId>water-collection-resource-model</artifactId>
+            <artifactId>water-collection-service-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -84,16 +84,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-        </dependency>
-
-        <!-- Spring fox -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
 
         <!-- 3p Libraries -->

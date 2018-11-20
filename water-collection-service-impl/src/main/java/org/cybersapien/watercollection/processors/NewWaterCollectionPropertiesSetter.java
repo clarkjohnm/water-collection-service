@@ -3,7 +3,7 @@ package org.cybersapien.watercollection.processors;
 import lombok.NonNull;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.service.v1.model.WaterCollection;
 
 import java.util.UUID;
 

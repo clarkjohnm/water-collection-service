@@ -5,7 +5,7 @@ import org.cybersapien.watercollection.processors.NewWaterCollectionPropertiesSe
 import org.cybersapien.watercollection.processors.WaterCollectionsCacheAdder;
 import org.cybersapien.watercollection.processors.WaterCollectionsCacheBulkReader;
 import org.cybersapien.watercollection.processors.WaterCollectionsCacheReader;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.service.v1.model.WaterCollection;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

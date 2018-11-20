@@ -22,14 +22,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <ignite.version>2.6.0</ignite.version>
-        <springfox.version>2.9.2</springfox.version>
         <springboot.version>2.0.6.RELEASE</springboot.version>
         <camel.version>2.22.1</camel.version>
         <spring.profiles.active>default</spring.profiles.active>
     </properties>
 
     <modules>
-        <module>water-collection-resource-model</module>
+        <module>water-collection-service-api</module>
         <module>water-collection-service-impl</module>
     </modules>
 
@@ -110,18 +109,6 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>1.4.196</version>
-            </dependency>
-
-            <!-- Spring fox -->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${springfox.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${springfox.version}</version>
             </dependency>
 
             <!-- 3p Libraries -->

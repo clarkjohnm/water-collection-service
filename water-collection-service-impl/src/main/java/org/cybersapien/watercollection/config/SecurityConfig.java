@@ -55,7 +55,8 @@ public class SecurityConfig {
             // As the name implies, authorize requests unless permission is granted to all
             http.authorizeRequests()
                     // Always allow access to the API documentation
-                    .antMatchers("/swagger-ui.html*").permitAll()
+                    // Switch this to serve up generated swagger.json
+                    //.antMatchers("/swagger-ui.html*").permitAll()
                     // Authorize access to the water-collection-service API to those having the USER role
                     .antMatchers("/v1/water-collections/**").hasRole("USER")
                     // Authorize access to the management API's to those having the ADMIN role

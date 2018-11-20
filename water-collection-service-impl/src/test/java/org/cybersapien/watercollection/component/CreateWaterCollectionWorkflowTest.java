@@ -14,7 +14,7 @@ import org.cybersapien.watercollection.config.WaterCollectionServiceConfig;
 import org.cybersapien.watercollection.processors.NewWaterCollectionPropertiesSetter;
 import org.cybersapien.watercollection.processors.ProcessingState;
 import org.cybersapien.watercollection.processors.WaterCollectionsCacheAdder;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.service.v1.model.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
