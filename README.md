@@ -139,7 +139,6 @@ will expose the service via `https` on port 8443.
 
 ###### Deploy stateful service **[Optional]**
 **NOTE: Container image string needs to be modified in `kb-stateful-config.yaml` before creating stateful set**
-
 **TODO: generate `kb-stateful-config.yaml` during build to specify image name**
 * Deploy **stateful** water collection service as stateful set: `kubectl apply -f kb-stateful-config.yaml` **WARNING: This costs $$**
 * Expose service: `kubectl apply -f kb-loadbalancer-config.yaml`
