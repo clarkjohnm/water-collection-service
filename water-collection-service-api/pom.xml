@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.cybersapien</groupId>
+        <artifactId>water-collection-service</artifactId>
+        <version>1.0.2</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <artifactId>water-collection-service-api</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.7</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <springmvc>false</springmvc>
+                            <locations>
+                                <location>org.cybersapien.watercollection.service.v1.api</location>
+                            </locations>
+                            <schemes>
+                                <scheme>https</scheme>
+                            </schemes>
+                            <host>cybersapien.org</host>
+                            <info>
+                                <title>Water Collection Service</title>
+                                <version>v1</version>
+                                <description>
+                                    A service to collect water sample data for analysis
+                                </description>
+                                <contact>
+                                    <name>John Clark</name>
+                                </contact>
+                                <license>
+                                    <url>https://github.com/clarkjohnm/water-collection-service/blob/master/LICENSE.txt</url>
+                                    <name>MIT License</name>
+                                </license>
+                            </info>
+                            <swaggerDirectory>${project.basedir}/src/main/resources/api</swaggerDirectory>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>1.5.21</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+    </dependencies>
+
+</project>

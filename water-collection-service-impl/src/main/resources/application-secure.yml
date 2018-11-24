@@ -12,15 +12,3 @@ server:
     key-store-password: ENC(x99cyEZNMLwCWMTMnxYbH4zTGc4tjL/t)
     # The alias mapped to the certificate
     key-alias: wcs
-
-# Tell Spring Security to require requests over HTTPS
-security:
-  require-ssl: true
-
-# Security setting for Spring Actuator
-management:
-  security:
-    enabled: true
-
-
-

@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.9.RELEASE</version>
+        <version>2.0.6.RELEASE</version>
         <relativePath />
     </parent>
 
     <groupId>org.cybersapien</groupId>
     <artifactId>water-collection-service</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
 
     <name>water-collection-service</name>
@@ -21,15 +21,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <ignite.version>2.3.0</ignite.version>
-        <springfox.version>2.6.1</springfox.version>
-        <springboot.version>1.5.9.RELEASE</springboot.version>
-        <camel.version>2.20.1</camel.version>
-        <spring.profiles.active>secure</spring.profiles.active>
+        <ignite.version>2.6.0</ignite.version>
+        <springboot.version>2.0.6.RELEASE</springboot.version>
+        <camel.version>2.22.1</camel.version>
+        <spring.profiles.active>default</spring.profiles.active>
     </properties>
 
     <modules>
-        <module>water-collection-resource-model</module>
+        <module>water-collection-service-api</module>
         <module>water-collection-service-impl</module>
     </modules>
 
@@ -54,6 +53,11 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-json</artifactId>
                 <version>${springboot.version}</version>
             </dependency>
             <dependency>
@@ -96,20 +100,29 @@
                 <artifactId>ignite-slf4j</artifactId>
                 <version>${ignite.version}</version>
             </dependency>
-
-            <!-- Spring fox -->
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${springfox.version}</version>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-kubernetes</artifactId>
+                <version>${ignite.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${springfox.version}</version>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.4.196</version>
             </dependency>
 
             <!-- 3p Libraries -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.20</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>2.1.0</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
@@ -121,19 +134,9 @@
                 <version>3.6.1</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.8.7</version>
-            </dependency>
-            <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
-                <version>1.1.0.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.ulisesbocchio</groupId>
-                <artifactId>jasypt-spring-boot-starter</artifactId>
-                <version>1.17</version>
+                <version>2.0.1.Final</version>
             </dependency>
 
             <!--Test artifacts-->
@@ -159,6 +162,15 @@
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>cobertura-maven-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>

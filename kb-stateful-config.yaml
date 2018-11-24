@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: wcs-stateful-server
+spec:
+  serviceName: water-collection-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ignite # value must match spec.template.metadata.labels. For Apache Ignite clustering the app MUST be ignite
+      svc: water-collection-service
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ignite
+        svc: water-collection-service
+    spec:
+      containers:
+      - name: wcs-server
+        image: gcr.io/wcs-195520/wcs:1.0.2-ignite__persistence-SNAPSHOT
+        ports:
+        - containerPort: 8443
+          name: wcs-port
+        volumeMounts:
+        - name: wcs-persistant-volume
+          mountPath: /opt/ignite/pv
+  volumeClaimTemplates:
+  - metadata:
+      name: wcs-persistant-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi

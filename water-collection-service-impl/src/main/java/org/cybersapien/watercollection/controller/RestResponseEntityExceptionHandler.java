@@ -1,17 +1,17 @@
 package org.cybersapien.watercollection.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.cybersapien.watercollection.service.datatypes.error.Errors;
-import org.cybersapien.watercollection.service.datatypes.error.Error;
-import org.cybersapien.watercollection.service.datatypes.error.Source;
+import org.cybersapien.watercollection.service.v1.model.error.Error;
+import org.cybersapien.watercollection.service.v1.model.error.Errors;
+import org.cybersapien.watercollection.service.v1.model.error.Source;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.validation.BindException;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -100,9 +100,10 @@ public class RestResponseEntityExceptionHandler {
      * @return a ResponseEntity containing the Error response
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Errors> handleGeneralException(Exception exception, WebRequest request) {
+    public ResponseEntity<Errors> handleGeneralException(Exception exception, WebRequest request) throws Exception {
         log.error("", exception);
 
+        // TODO Null checks!
         ResponseEntity<Object> responseEntity = new ResponseEntityExceptionHandler() {}.handleException(exception, request);
 
         Source source = new Source();

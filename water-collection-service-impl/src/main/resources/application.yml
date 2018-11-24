@@ -1,8 +1,8 @@
 # Server properties
 server:
-  # Service context
-  contextPath: /water-collection-service
   port: 8080
+  servlet:
+    context-path: /water-collection-service
 
 # Encryption properties
 jasypt:
@@ -12,11 +12,20 @@ jasypt:
 
 # Security setting for Spring Actuator
 management:
-  security:
-    enabled: true
-  context-path: /actuator
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
 
 # Camel properties
 camel:
   springboot:
     name: WaterCollectionCamelContext
+
+ignite:
+  persistence:
+    enabled: true
+    directory: /opt/ignite/pv
+  work:
+    directory: /opt/ignite/pv/work
