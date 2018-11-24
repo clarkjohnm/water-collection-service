@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.cybersapien</groupId>
         <artifactId>water-collection-service</artifactId>
-        <version>1.0.2-get__watercollections__op-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>water-collection-service-impl</artifactId>
@@ -188,7 +188,7 @@
                             <ignoreMethodAnnotation>lombok.Generated</ignoreMethodAnnotation>
                         </ignoreMethodAnnotations>
                     </instrumentation>
-                    <check/>
+                    <check />
                 </configuration>
             </plugin>
         </plugins>
