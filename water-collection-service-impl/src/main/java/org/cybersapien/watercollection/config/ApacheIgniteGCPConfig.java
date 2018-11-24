@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 @Profile("gcp")
 public class ApacheIgniteGCPConfig {
-
     /**
      * The TcpDiscoveryKubernetesIpFinder bean
      *

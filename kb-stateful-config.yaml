@@ -4,7 +4,7 @@ metadata:
   name: wcs-stateful-server
 spec:
   serviceName: water-collection-service
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: ignite # value must match spec.template.metadata.labels. For Apache Ignite clustering the app MUST be ignite

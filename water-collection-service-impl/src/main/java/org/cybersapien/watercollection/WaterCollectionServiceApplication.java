@@ -12,7 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration
 @ComponentScan
 public class WaterCollectionServiceApplication {
-
     /**
      * Entrypoint for the water collection service
      *

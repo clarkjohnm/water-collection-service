@@ -100,7 +100,7 @@ in the water.
 * The service will log request metrics
 
 ## Online API documentation
-**http://localhost:8080/water-collection-service/swagger-ui.html**
+**http://localhost:8080/water-collection-service/api/swagger.json**
 
 ## Deployment details
 
@@ -116,9 +116,6 @@ A project `water-collection-service` with project id `wcs-195520` already exists
 instances or for creating a cluster using `kubernetes`. Googles' container optimized images with Docker support will
 be used when creating instances.
 
-* Set current project: `gcloud config set project wcs-195520`
-* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:<version>`
-
 ### Releases
 A release build will use the `secure` and `gcp` Spring profiles (i.e.`-Dspring.profiles=secure,gcp`). The `secure` profile
 will expose the service via `https` on port 8443.
@@ -126,40 +123,39 @@ will expose the service via `https` on port 8443.
 #### Kubernetes steps
 
 ##### Cluster setup
-* Create kubernetes cluster: `gcloud container clusters create wcs-cluster`
+* Set current project: `gcloud config set project wcs-195520`
+* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:<version>`
+* Create kubernetes cluster: `gcloud container clusters create wcs-cluster --machine-type=n1-highmem-4`
 * Set current cluster: `gcloud config set container/cluster wcs-cluster`
 * Set cluster credentials: `gcloud container clusters get-credentials wcs-cluster`
 * Create kubernetes role for service account: 
 `kubectl create clusterrolebinding serviceaccounts-cluster-admin --clusterrole=cluster-admin --group=system:serviceaccounts` (**Strongly Discouraged. However, without permissions, the discovery service call will fail with a 403**)
 * Deploy Ignite Discovery service: `kubectl create -f ignite-discovery-service.yaml`
 
-###### Deploy stateful service
-**NOTE: Container image string needs to be modified in `kb-stateful-config.yaml` before creating stateful set**
-
-**TODO: generate `kb-stateful-config.yaml` during build to specify image name**
-* Deploy **stateful** water collection service as stateful set: `kubectl apply -f kb-stateful-config.yaml` **WARNING: This costs $$**
-* Expose service: `kubectl apply -f kb-loadbalancer-config.yaml`
-
-###### Deploy stateless service
+###### Deploy stateless service **[Preferred]**
 * Deploy **stateless** service using kubernetes: 
 `kubectl run wcs-server --image gcr.io/wcs-195520/wcs:<version> --port 8443 --labels="app=ignite,svc=water-collection-service"`
 * Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 443 --target-port 8443`
+
+###### Deploy stateful service **[Optional]**
+**NOTE: Container image string needs to be modified in `kb-stateful-config.yaml` before creating stateful set**
+**TODO: generate `kb-stateful-config.yaml` during build to specify image name**
+* Deploy **stateful** water collection service as stateful set: `kubectl apply -f kb-stateful-config.yaml` **WARNING: This costs $$**
+* Expose service: `kubectl apply -f kb-loadbalancer-config.yaml`
 
 ##### Delete kubernetes service then cluster
 * Run `gcloud container clusters delete wcs-cluster`
 
 ##### Useful kubectl commands
+* List pods: `kubectl get pods`
+* View pod logs: `kubectl logs <pod name>`
 * Run bash on a pod: `kubectl exec <pod name> -i -t -- bash -il`
+* Restart pod: `kubectl get pod <pod name> -n default -o yaml | kubectl replace --force -f -`
 * curl command to verify access to discovery service: `curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer <contents of /var/run/secrets/kubernetes.io/serviceaccount/token>" https://kubernetes.default.svc.cluster.local:443/api/v1/namespaces/default/endpoints/wcs-cluster-discovery`
 * Cluster info: `kubectl cluster-info`
 * Start proxy to access remote URL's: `kubectl proxy`
 * Config info: `kubectl config view`
-* Restart pod: `kubectl get pod PODNAME -n default -o yaml | kubectl replace --force -f -`
 * Get service details for external IP to connect over the internet: `kubectl get service`
-
-###### View service logs
-* Run `kubectl get pods` to get the pod name
-* Run `kubectl logs <pod name>`
 
 #### Basic Google Compute Engine steps (w/o Kubernetes)
 * Create instance:
@@ -214,13 +210,14 @@ If you need to re-generate a master password,
 
 * Run the service from within the `water-collection-service-impl` module: `mvn spring-boot:run`
 
-### Docker
+## Docker on localhost
+**[The docker container creation in the POM will need to be modified to set the Spring profiles for localhost]**
 
-* Run docker in background and use volume mapping:
-`docker run -d --rm -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
+* Run docker in foreground
+`docker run -it --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
 
-* Run docker in foreground and use port mapping:
-`docker run -it -p 8443:8443 --rm gcr.io/wcs-195520/wcs:<version>`
+* Run docker in background
+`docker run -d --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
 
 * Attach to a container: `docker exec -it <container id> bash`
 

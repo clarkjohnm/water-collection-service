@@ -3,14 +3,14 @@ package org.cybersapien.watercollection.processors;
 import lombok.NonNull;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.service.v1.model.WaterCollection;
 
 import java.util.UUID;
 
 /**
  * Processor to set the properties of a new water collection which must be set by the server.
  */
-public class NewWaterCollectionPropertiesSetter implements Processor{
+public class NewWaterCollectionPropertiesSetter implements Processor {
     @Override
     public void process(@NonNull Exchange exchange) throws Exception {
         if (exchange.isFailed()) {

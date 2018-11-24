@@ -19,11 +19,10 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 @Configuration
 public class ApacheCamelConfig {
-
     /**
      * Scheme for accessing ignite cache in a URI
      */
-    public static final String IGNITE_CACHE_URI_SCHEME = "ignite-cache";
+    private static final String IGNITE_CACHE_URI_SCHEME = "ignite-cache";
 
     /**
      * URI for accessing ignite cache containing water collections

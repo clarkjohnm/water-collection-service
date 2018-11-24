@@ -1,63 +1,91 @@
 package org.cybersapien.watercollection.component;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.spring.CamelSpringBootRunner;
+import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.boot.CamelContextConfiguration;
 import org.apache.camel.test.spring.DisableJmx;
-import org.apache.ignite.IgniteCache;
+import org.apache.camel.test.spring.MockEndpoints;
 import org.cybersapien.watercollection.config.ApacheCamelConfig;
+import org.cybersapien.watercollection.config.ApacheIgniteConfig;
+import org.cybersapien.watercollection.config.ApacheIgniteDefaultConfig;
+import org.cybersapien.watercollection.config.WaterCollectionServiceConfig;
 import org.cybersapien.watercollection.processors.NewWaterCollectionPropertiesSetter;
 import org.cybersapien.watercollection.processors.ProcessingState;
-import org.cybersapien.watercollection.service.datatypes.v1.service.WaterCollection;
+import org.cybersapien.watercollection.processors.WaterCollectionsCacheAdder;
+import org.cybersapien.watercollection.service.v1.model.WaterCollection;
 import org.cybersapien.watercollection.util.WaterCollectionCreator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.cache.Cache;
+import javax.inject.Inject;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
- * Integration test for RetrieveWaterCollectionWorkflow
+ * Integration test for CreateWaterCollectionWorkflow
  *
  */
-@RunWith(CamelSpringBootRunner.class)
-@SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {
+        ApacheCamelConfig.class,
+        ApacheIgniteConfig.class,
+        ApacheIgniteDefaultConfig.class,
+        WaterCollectionServiceConfig.class
+})
+@EnableAutoConfiguration
+@MockEndpoints
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @DisableJmx()
-public class CreateWaterCollectionWorkflowTest extends CamelTestSupport {
+public class CreateWaterCollectionWorkflowTest {
     /**
-     * Apache ignite cache component
+     * Water collection cache
      */
-    @Autowired
-    private IgniteCacheComponent igniteCacheComponent;
+    @Inject
+    private Cache<String, WaterCollection> waterCollectionCache;
 
     /**
-     * WaterCollection cache
+     * FluentProducerTemplate
      */
-    @Autowired
-    private IgniteCache<String, WaterCollection> waterCollectionCache;
+    @Inject
+    private FluentProducerTemplate fluentTemplate;
 
-    @Override
-    public String isMockEndpoints() {
-        // override this method and return the pattern for which endpoints to mock.
-        // use * to indicate all
-        return "*";
-    }
+    @TestConfiguration
+    static class Config {
+        @Inject
+        NewWaterCollectionPropertiesSetter newWaterCollectionPropertiesSetter;
 
-    @Override
-    public boolean isUseAdviceWith() {
-        return false;
-    }
+        @Inject
+        WaterCollectionsCacheAdder waterCollectionsCacheAdder;
 
-    @Override
-    public RoutesBuilder createRouteBuilder() throws Exception {
-        context.addComponent(ApacheCamelConfig.IGNITE_CACHE_URI_SCHEME, igniteCacheComponent);
+        @Bean
+        CamelContextConfiguration contextConfiguration() {
+            return new CamelContextConfiguration() {
+                @Override
+                public void afterApplicationStart(CamelContext camelContext) {
+                    // Modify camel context here
+                }
 
-        return new CreateWaterCollectionWorkflow.CreateWaterCollectionWorkflowBuilder()
-                .newWaterCollectionPropertiesSetter(new NewWaterCollectionPropertiesSetter())
-                .build();
+                @Override
+                public void beforeApplicationStart(CamelContext camelContext) {
+                    // Modify camel context here
+                }
+            };
+        }
+
+        @Bean
+        RouteBuilder routeBuilder() {
+            return new CreateWaterCollectionWorkflow(newWaterCollectionPropertiesSetter, waterCollectionsCacheAdder);
+        }
     }
 
     /**
@@ -85,8 +113,6 @@ public class CreateWaterCollectionWorkflowTest extends CamelTestSupport {
      */
     @Test(expected = CamelExecutionException.class)
     public void testCreateWorkflowWithNull() throws Exception {
-        final String id = WaterCollectionCreator.buildMinimal().getId();
-
         fluentTemplate.withBody(null).to(CreateWaterCollectionWorkflow.WORKFLOW_URI).request();
     }
 }
