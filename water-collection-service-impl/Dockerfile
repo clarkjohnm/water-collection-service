@@ -16,4 +16,5 @@ RUN apk --no-cache add curl
 COPY ${IGNITE_HOME_SOURCE} $IGNITE_HOME
 ADD ${JAR_FILE} /opt/water-collection-service/lib/wcs.jar
 #
+EXPOSE 8080
 ENTRYPOINT ["/bin/bash", "-c", "java -Dspring.profiles.active=${ACTIVE_SPRING_PROFILE} -server -Xms512m -Xmx2g -XX:MaxDirectMemorySize=2g -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ScavengeBeforeFullGC -XX:+DisableExplicitGC -Djava.net.preferIPv4Stack=true -Djava.security.egd=file:/dev/./urandom -jar /opt/water-collection-service/lib/wcs.jar"]

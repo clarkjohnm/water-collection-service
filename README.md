@@ -87,7 +87,7 @@ in the water.
 * The service will drop requests from the same station id within 5 seconds if not valid
 
 ## Availability Considerations:
-* The service will be available 99.999% of the time. This translates to ~30 seconds per year.
+* The service will be available 99.999% of the time. This translates to ~30 seconds of downtime per year.
 
 ## Maintainability Considerations:
 * The resource will be versioned by a URL path attribute.
@@ -99,14 +99,22 @@ in the water.
 * The service will log all requests
 * The service will log request metrics
 
+## API Design
+The service API definition uses a **code first** approach. The API and resource models are maintained and annotated appropriately
+so an OpenAPI specification can be generated in a swaagger.json for clients to consume.
+A **code first** approach was taken so that a monlithic, multi-versioned OpenAPI specification would not have to be maintained
+by the service provider. Furthermore, maintaining an OpenAPI specification seemed to repeat the past of maintaining WSDL and XSD
+specifications done in the days of SOAP web services which have fallen out of favor.
+
 ## Online API documentation
 **http://localhost:8080/water-collection-service/api/swagger.json**
 
 ## Deployment details
 
-The deployment strategy is to create a Docker image of the service in a Java enabled base container. The Docker image will
-automatically be created when you run `mvn clean install`. The image will be created with the repository
-`gcr.io/wcs-195520/wcs` followed by the version specified by the POM.
+The deployment strategy is to create a Docker image of the service in a Java enabled base container. Two Docker images will
+automatically be created when you run `mvn clean install`. One image is the default and the other is for GCP.
+The dwfault image will be created with the repository `clarkjohnm/wcs` followed by the project version specified by the POM.
+The GCP image will be created with the repository `gcr.io/wcs-195520/wcs/gcp` followed by the project version specified by the POM.
 
 ### Google Cloud Configuration
 
@@ -116,15 +124,11 @@ A project `water-collection-service` with project id `wcs-195520` already exists
 instances or for creating a cluster using `kubernetes`. Googles' container optimized images with Docker support will
 be used when creating instances.
 
-### Releases
-A release build will use the `secure` and `gcp` Spring profiles (i.e.`-Dspring.profiles=secure,gcp`). The `secure` profile
-will expose the service via `https` on port 8443.
-
 #### Kubernetes steps
 
 ##### Cluster setup
 * Set current project: `gcloud config set project wcs-195520`
-* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs:<version>`
+* Push docker image to google repository: `gcloud docker -- push gcr.io/wcs-195520/wcs/gcp:<version>`
 * Create kubernetes cluster: `gcloud container clusters create wcs-cluster --machine-type=n1-highmem-4`
 * Set current cluster: `gcloud config set container/cluster wcs-cluster`
 * Set cluster credentials: `gcloud container clusters get-credentials wcs-cluster`
@@ -134,8 +138,8 @@ will expose the service via `https` on port 8443.
 
 ###### Deploy stateless service **[Preferred]**
 * Deploy **stateless** service using kubernetes: 
-`kubectl run wcs-server --image gcr.io/wcs-195520/wcs:<version> --port 8443 --labels="app=ignite,svc=water-collection-service"`
-* Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 443 --target-port 8443`
+`kubectl run wcs-server --image gcr.io/wcs-195520/wcs/gcp:<version> --port 8080 --labels="app=ignite,svc=water-collection-service"`
+* Expose service: `kubectl expose deployment wcs-server --type=LoadBalancer --port 443 --target-port 8080`
 
 ###### Deploy stateful service **[Optional]**
 **NOTE: Container image string needs to be modified in `kb-stateful-config.yaml` before creating stateful set**
@@ -161,7 +165,7 @@ will expose the service via `https` on port 8443.
 * Create instance:
 ```
 gcloud beta compute instances create-with-container wcs-compute-1 \
---container-image gcr.io/wcs-195520/wcs:<version> \
+--container-image gcr.io/wcs-195520/wcs/gcp:<version> \
 --machine-type=n1-standard-1 \
 --no-restart-on-failure \
 --tags=http-server,https-server
@@ -211,17 +215,20 @@ If you need to re-generate a master password,
 * Run the service from within the `water-collection-service-impl` module: `mvn spring-boot:run`
 
 ## Docker on localhost
-**[The docker container creation in the POM will need to be modified to set the Spring profiles for localhost]**
-
 * Run docker in foreground
-`docker run -it --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
+    * `docker run -it --rm -p 8080:8080 -v /opt/ignite:/opt/ignite clarkjohnm/wcs:<version>`
 
 * Run docker in background
-`docker run -d --rm -p 8443:8443 -v /opt/ignite:/opt/ignite gcr.io/wcs-195520/wcs:<version>`
+    * `docker run -d --rm -p 8080:8080 -v /opt/ignite:/opt/ignite clarkjohnm/wcs:<version>`
 
-* Attach to a container: `docker exec -it <container id> bash`
+* Run multiple docker containers in background. Each container will expose a different port but map to port 8080 in the
+container. Use `docker ps` to see the list of containers and their published ports.
+    * `docker run -d -P --rm -v /opt/ignite:/opt/ignite clarkjohnm/wcs:<version>`
 
-## Apache Ignite
+* Attach to a container.
+    * `docker exec -it <container id> bash`
+
+## Apache Ignite Notes
 
 * Mgmt console: `docker run -d -p 8090:80 -v <host_absolute_path>:/var/lib/mongodb --name web-console-standalone apacheignite/web-console-standalone`
 * For Grid metrics look for `GridDiscoveryManager` in logs
